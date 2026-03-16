@@ -1,0 +1,92 @@
+.overlay {
+  composes: modalOverlay from '../../styles/shared.module.css';
+}
+
+.modal {
+  composes: modalPanel from '../../styles/shared.module.css';
+  width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.header {
+  composes: modalHeader from '../../styles/shared.module.css';
+}
+
+.title {
+  composes: cardTitle from '../../styles/shared.module.css';
+}
+
+.closeBtn {
+  composes: modalCloseBtn from '../../styles/shared.module.css';
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+.preview {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 20px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: inherit;
+}
+
+.preview::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: 0%;
+  right: 0%;
+  height: 80%;
+  background: radial-gradient(ellipse, rgba(var(--stat-color), 0.15) 0%, transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.preview:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.previewDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.previewLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.previewSubtitle {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.previewBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+}

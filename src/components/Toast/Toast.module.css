@@ -1,0 +1,135 @@
+.container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset, 0 20px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.toastBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-top: 1px;
+}
+
+.icon[data-type="success"] {
+  color: #3ED68C;
+}
+
+.icon[data-type="warning"] {
+  color: #facc15;
+}
+
+.icon[data-type="error"] {
+  color: #FF9592;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.description {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+}
+
+.close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+.close:hover {
+  color: #fff;
+}
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.countdownText {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+}
+
+.clickToStop {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.clickToStop:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.progressTrack {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 1px;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 1s linear;
+}
+
+.progressBar[data-type="success"] {
+  background: #3ED68C;
+}
+
+.progressBar[data-type="warning"] {
+  background: #facc15;
+}
+
+.progressBar[data-type="error"] {
+  background: #FF9592;
+}
+

@@ -1,20 +1,48 @@
 import { CheckinsHeatmap } from './CheckinsHeatmap'
+import { CheckinsSummaryTable } from './CheckinsSummaryTable'
+import { Skeleton } from '../ui/Skeleton/Skeleton'
+import type { CheckinPeriodRow } from '../../lib/dashboard-aggregations'
 import styles from './CheckinsCard.module.css'
 
-export function CheckinsCard() {
+interface CheckinsCardProps {
+  heatmapData: number[][]
+  summaryRows: CheckinPeriodRow[]
+  dateRange: string
+  loading?: boolean
+  error?: Error
+}
+
+export function CheckinsCard({ heatmapData, summaryRows, dateRange, loading, error }: CheckinsCardProps) {
   return (
-    <div className={styles.card}>
+    <div className={styles.card} style={{ '--glow': '34, 197, 94' } as React.CSSProperties}>
       <div className={styles.titleRow}>
         <h2 className={styles.title}>Member Check-ins</h2>
-        <p className={styles.subtitle}>Feb 5th - Mar 5th</p>
+        <p className={styles.subtitle}>{dateRange}</p>
       </div>
-      <div className={styles.stats}>
-        <div className={styles.bigNumber}>4,156</div>
-        <div className={styles.change}>&#9650; 15.3% from last month</div>
-      </div>
-      <div className={styles.chartWrapper}>
-        <CheckinsHeatmap />
-      </div>
+      <p className={styles.description}>
+        Peak activity is between <strong>5-7 PM</strong> on weekdays, with Tuesday and
+        Thursday drawing the most members. Morning sessions are trending up{' '}
+        <strong>8.2%</strong> this month.
+      </p>
+      {loading ? (
+        <div style={{ padding: '20px 0' }}>
+          <Skeleton width="100%" height={180} borderRadius={8} />
+          <div style={{ marginTop: 16 }}>
+            <Skeleton width="100%" height={60} borderRadius={8} />
+          </div>
+        </div>
+      ) : error ? (
+        <p className={styles.description} style={{ color: '#FF9592' }}>
+          Failed to load check-in data.
+        </p>
+      ) : (
+        <>
+          <div className={styles.chartWrapper}>
+            <CheckinsHeatmap data={heatmapData} />
+          </div>
+          <CheckinsSummaryTable rows={summaryRows} />
+        </>
+      )}
     </div>
   )
 }

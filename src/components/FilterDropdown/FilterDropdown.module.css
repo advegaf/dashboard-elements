@@ -1,0 +1,42 @@
+.wrapper {
+  position: relative;
+}
+
+.btn {
+  composes: ghostPill from '../../styles/shared.module.css';
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  white-space: nowrap;
+}
+
+.dropdown {
+  composes: glassSurface from '../../styles/shared.module.css';
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 170px;
+  padding: 10px;
+  z-index: 50;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.option:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.checkbox {
+  composes: checkbox from '../../styles/shared.module.css';
+}

@@ -1,64 +1,65 @@
+import { useId } from 'react'
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
-  type BarProps,
 } from 'recharts'
+import type { RevenueBucket } from '../../lib/dashboard-aggregations'
 
-function GlowBar(props: BarProps & { fill?: string; x?: number; y?: number; width?: number; height?: number }) {
-  const { x = 0, y = 0, width = 0, height = 0, fill } = props
+interface ShapeProps { fill?: string; x?: number; y?: number; width?: number; height?: number; glowId?: string }
+
+function GlowBar(props: ShapeProps) {
+  const { x = 0, y = 0, width = 0, height = 0, fill, glowId } = props
   const r = 3
   const d = `M${x},${y} H${x + width} V${y + height - r} A${r},${r} 0 0 1 ${x + width - r},${y + height} H${x + r} A${r},${r} 0 0 1 ${x},${y + height - r} Z`
   return (
     <path
       d={d}
       fill={fill}
-      filter="url(#orangeGlow)"
+      filter={glowId ? `url(#${glowId})` : undefined}
     />
   )
 }
 
-function GlassBar(props: BarProps & { x?: number; y?: number; width?: number; height?: number }) {
-  const { x, y, width, height } = props
-  const gradientId = `glassGrad-${x}-${y}`
+interface GlassBarProps extends ShapeProps { gradId?: string }
+
+function GlassBar(props: GlassBarProps) {
+  const { x, y, width, height, gradId } = props
   return (
-    <g>
-      <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.25)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0.08)" />
-        </linearGradient>
-      </defs>
-      <rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        fill={`url(#${gradientId})`}
-        rx={3}
-        ry={3}
-      />
-    </g>
+    <rect
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+      fill={gradId ? `url(#${gradId})` : undefined}
+      rx={3}
+      ry={3}
+    />
   )
 }
 
-const data = [
-  { name: 'Feb 5', gray: 3.2, orange: 1.8 },
-  { name: 'Feb 9', gray: 4.5, orange: 2.4 },
-  { name: 'Feb 13', gray: 3.8, orange: 2.1 },
-  { name: 'Feb 17', gray: 5.1, orange: 3.0 },
-  { name: 'Feb 21', gray: 4.2, orange: 2.5 },
-  { name: 'Feb 25', gray: 4.8, orange: 2.8 },
-  { name: 'Mar 1', gray: 5.5, orange: 3.2 },
-  { name: 'Mar 5', gray: 5.8, orange: 3.5 },
-]
+interface SalesChartProps {
+  data: RevenueBucket[]
+}
 
-export function SalesChart() {
-  const ticks = [0, 2, 4, 6]
-  const domainMax = 6
+export function SalesChart({ data }: SalesChartProps) {
+  const id = useId()
+  const glassGradId = `${id}-glassGrad`
+  const barGlowId = `${id}-barGlow`
+
+  function getBarColor(index: number): string {
+    if (index === 0) return '#22995F'
+    return data[index].revenue >= data[index - 1].revenue ? '#22995F' : '#E05552'
+  }
+
+  const maxVal = Math.max(...data.map(d => d.gray), ...data.map(d => d.revenue), 0.1)
+  const domainMax = Math.ceil(maxVal * 1.2) || 6
+  const tickStep = domainMax / 3
+  const ticks = [0, Math.round(tickStep * 10) / 10, Math.round(tickStep * 2 * 10) / 10, domainMax]
 
   return (
     <div style={{ width: '100%', height: 220 }}>
@@ -70,7 +71,11 @@ export function SalesChart() {
           margin={{ top: 5, right: 20, left: -5, bottom: 0 }}
         >
           <defs>
-            <filter id="orangeGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <linearGradient id={glassGradId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.25)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.08)" />
+            </linearGradient>
+            <filter id={barGlowId} x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
@@ -104,15 +109,18 @@ export function SalesChart() {
             fill="rgba(255,255,255,0.2)"
             radius={[3, 3, 0, 0]}
             barSize={32}
-            shape={<GlassBar />}
+            shape={<GlassBar gradId={glassGradId} />}
           />
           <Bar
-            dataKey="orange"
-            fill="#f59e0b"
+            dataKey="revenue"
             radius={0}
             barSize={32}
-            shape={<GlowBar />}
-          />
+            shape={<GlowBar glowId={barGlowId} />}
+          >
+            {data.map((_, index) => (
+              <Cell key={index} fill={getBarColor(index)} />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

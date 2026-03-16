@@ -1,0 +1,10 @@
+@keyframes micBounce {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-3px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(-2px); }
+}
+
+.micCapsuleAnimate {
+  animation: micBounce 0.6s ease-in-out;
+}

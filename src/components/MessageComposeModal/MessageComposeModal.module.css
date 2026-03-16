@@ -1,0 +1,60 @@
+.overlay {
+  composes: modalOverlay from '../../styles/shared.module.css';
+}
+
+.modal {
+  composes: modalPanel from '../../styles/shared.module.css';
+  width: 520px;
+}
+
+.header {
+  composes: modalHeader from '../../styles/shared.module.css';
+}
+
+.title {
+  composes: cardTitle from '../../styles/shared.module.css';
+}
+
+.closeBtn {
+  composes: modalCloseBtn from '../../styles/shared.module.css';
+}
+
+.form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  composes: formField from '../../styles/shared.module.css';
+}
+
+.recipientList {
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.cancelBtn {
+  composes: ghostPill from '../../styles/shared.module.css';
+}
+
+.sendBtn {
+  composes: ghostPill from '../../styles/shared.module.css';
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}

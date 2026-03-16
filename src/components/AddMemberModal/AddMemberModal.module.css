@@ -1,0 +1,119 @@
+.overlay {
+  composes: modalOverlay from '../../styles/shared.module.css';
+}
+
+.modal {
+  composes: modalPanel from '../../styles/shared.module.css';
+  width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.header {
+  composes: modalHeader from '../../styles/shared.module.css';
+}
+
+.title {
+  composes: cardTitle from '../../styles/shared.module.css';
+}
+
+.closeBtn {
+  composes: modalCloseBtn from '../../styles/shared.module.css';
+}
+
+.form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.photoUploadWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.photoUpload {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+  padding: 0;
+  font-family: inherit;
+}
+
+.photoUpload:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.photoPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.photoPlaceholder span {
+  font-size: 11px;
+}
+
+.photoPreviewImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoError {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+}
+
+.photoErrorText {
+  font-size: 11px;
+  color: #FF9592;
+}
+
+.field {
+  composes: formField from '../../styles/shared.module.css';
+}
+
+.fieldError input,
+.fieldError select {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+}
+
+.fieldError span {
+  color: #FF9592;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cancelBtn {
+  composes: ghostPill from '../../styles/shared.module.css';
+}
+
+.submitBtn {
+  composes: ghostPill from '../../styles/shared.module.css';
+  font-weight: 500;
+}
+
+.submitBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

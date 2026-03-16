@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import {
   AreaChart,
   Area,
@@ -7,32 +8,25 @@ import {
   ReferenceDot,
   Tooltip,
 } from 'recharts'
+import type { SignupBucket } from '../../lib/dashboard-aggregations'
+import styles from './SignupsChart.module.css'
 
-const data = [
-  { name: 'Feb 5', value: 5 },
-  { name: 'Feb 8', value: 7 },
-  { name: 'Feb 11', value: 4 },
-  { name: 'Feb 14', value: 9 },
-  { name: 'Feb 17', value: 6 },
-  { name: 'Feb 20', value: 8 },
-  { name: 'Feb 23', value: 10 },
-  { name: 'Feb 26', value: 7 },
-  { name: 'Mar 1', value: 12 },
-  { name: 'Mar 5', value: 15 },
-]
+interface SignupsChartProps {
+  data: SignupBucket[]
+}
 
-function CustomLabel({ viewBox }: { viewBox?: { x: number; y: number } }) {
+function CustomLabel({ viewBox, lastValue }: { viewBox?: { x: number; y: number }; lastValue: number }) {
   if (!viewBox) return null
   return (
     <text
-      x={viewBox.x}
+      x={viewBox.x + 4}
       y={viewBox.y - 12}
-      fill="#22c55e"
+      fill="#22995F"
       fontSize={11}
       fontWeight={600}
-      textAnchor="middle"
+      textAnchor="end"
     >
-      +38 new
+      +{lastValue} new
     </text>
   )
 }
@@ -62,31 +56,32 @@ function PulseDot({ cx, cy }: { cx?: number; cy?: number }) {
   if (cx == null || cy == null) return null
   return (
     <g>
-      <circle cx={cx} cy={cy} r={4} fill="#22c55e" stroke="#fff" strokeWidth={2} />
-      <circle cx={cx} cy={cy} r={4} fill="none" stroke="#22c55e" className="pulse-ring" />
+      <circle cx={cx} cy={cy} r={4} fill="#22995F" stroke="#fff" strokeWidth={2} />
+      <circle cx={cx} cy={cy} r={4} fill="none" stroke="#22995F" className={styles.pulseRing} />
     </g>
   )
 }
 
-export function SignupsChart() {
+export function SignupsChart({ data }: SignupsChartProps) {
+  const id = useId()
+  const gradientId = `${id}-signupsGradient`
+
+  if (data.length === 0) return null
+
+  const lastPoint = data[data.length - 1]
+  const maxValue = Math.max(...data.map(d => d.value), 1)
+
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={data} margin={{ top: 20, right: 40, left: 0, bottom: 0 }}>
+      <AreaChart data={data} margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
         <defs>
-          <linearGradient id="signupsGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#22c55e" stopOpacity={0.3} />
-            <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#22995F" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="#22995F" stopOpacity={0} />
           </linearGradient>
-          <style>{`
-            @keyframes pulse {
-              0% { r: 4; opacity: 0.6; }
-              100% { r: 14; opacity: 0; }
-            }
-            .pulse-ring { animation: pulse 2s ease-out infinite; }
-          `}</style>
         </defs>
         <XAxis dataKey="name" hide />
-        <YAxis hide domain={[0, 18]} />
+        <YAxis hide domain={[0, Math.ceil(maxValue * 1.2)]} />
         <Tooltip
           content={<CustomTooltip />}
           cursor={{ stroke: 'rgba(255,255,255,0.2)' }}
@@ -94,17 +89,17 @@ export function SignupsChart() {
         <Area
           type="monotone"
           dataKey="value"
-          stroke="#22c55e"
+          stroke="#22995F"
           strokeWidth={2}
-          fill="url(#signupsGradient)"
+          fill={`url(#${gradientId})`}
         />
         <ReferenceDot
-          x="Mar 5"
-          y={15}
+          x={lastPoint.name}
+          y={lastPoint.value}
           r={4}
           fill="transparent"
           stroke="none"
-          label={<CustomLabel />}
+          label={<CustomLabel lastValue={lastPoint.value} />}
           shape={<PulseDot />}
         />
       </AreaChart>

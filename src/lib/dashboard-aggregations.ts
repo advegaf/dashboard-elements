@@ -1,0 +1,396 @@
+import type { StatsTimeRange } from '../context/MembersContext'
+
+// === Raw row types (from Supabase queries) ===
+
+export interface MemberSummaryRow {
+  status: string
+  joined_at: string
+}
+
+export interface PaymentEventRow {
+  amount_cents: number
+  status: string
+  created_at: string
+  event_type: string
+}
+
+export interface CheckInEventRow {
+  scanned_at: string
+}
+
+export interface RecentCheckInRow {
+  id: string
+  scanned_at: string
+  members: {
+    full_name: string
+    avatar_url: string | null
+    status: string
+    billing_status: string | null
+    subscriptions: Array<{
+      membership_plans: { name: string } | null
+    }>
+  }
+}
+
+// === Aggregated types ===
+
+export interface DateRange {
+  since: Date | null
+  extendedSince: Date | null
+  label: string
+}
+
+export interface KpiValue {
+  value: string
+  trend?: { value: number; direction: 'up' | 'down' }
+  sparkline: number[]
+}
+
+export interface KpiData {
+  retention: KpiValue
+  revenue: KpiValue
+  visits: KpiValue
+  signups: KpiValue
+}
+
+export interface RevenueBucket {
+  name: string
+  gray: number
+  revenue: number
+}
+
+export interface SignupBucket {
+  name: string
+  value: number
+}
+
+export interface SummaryRow {
+  label: string
+  value: string
+  change: string
+  positive: boolean
+}
+
+export interface RecentCheckIn {
+  id: string
+  name: string
+  avatarUrl: string
+  time: string
+  membership: string
+  billingStatus: string
+}
+
+export interface CheckinPeriodRow {
+  label: string
+  value: string
+  change: string
+  positive: boolean
+}
+
+// === Helpers ===
+
+function formatCurrency(cents: number): string {
+  const dollars = cents / 100
+  return `$${dollars.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+}
+
+function formatNumber(n: number): string {
+  return n.toLocaleString('en-US')
+}
+
+function formatDateShort(d: Date): string {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  return `${months[d.getMonth()]} ${d.getDate()}`
+}
+
+function formatDateLabel(d: Date): string {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const day = d.getDate()
+  const suffix = [1, 21, 31].includes(day) ? 'st' : [2, 22].includes(day) ? 'nd' : [3, 23].includes(day) ? 'rd' : 'th'
+  return `${months[d.getMonth()]} ${day}${suffix}`
+}
+
+function createTimeBuckets(since: Date | null, count: number, dataPoints?: string[]): Array<{ start: Date; end: Date; label: string }> {
+  const now = new Date()
+  let start: Date
+  if (since) {
+    start = since
+  } else if (dataPoints && dataPoints.length > 0) {
+    start = new Date(Math.min(...dataPoints.map(d => new Date(d).getTime())))
+  } else {
+    start = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
+  }
+
+  const range = now.getTime() - start.getTime()
+  if (range <= 0) return Array.from({ length: count }, () => ({ start: now, end: now, label: formatDateShort(now) }))
+
+  const bucketSize = range / count
+  return Array.from({ length: count }, (_, i) => ({
+    start: new Date(start.getTime() + bucketSize * i),
+    end: new Date(start.getTime() + bucketSize * (i + 1)),
+    label: formatDateShort(new Date(start.getTime() + bucketSize * i)),
+  }))
+}
+
+function computeTrend(current: number, prior: number): { value: number; direction: 'up' | 'down' } | undefined {
+  if (prior === 0 && current === 0) return undefined
+  if (prior === 0) return { value: 100, direction: 'up' }
+  const pct = ((current - prior) / prior) * 100
+  return { value: Math.abs(Math.round(pct * 10) / 10), direction: pct >= 0 ? 'up' : 'down' }
+}
+
+function daysForRange(timeRange: StatsTimeRange): number {
+  return timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90
+}
+
+// === Main functions ===
+
+export function computeDateRange(timeRange: StatsTimeRange): DateRange {
+  if (timeRange === 'all') {
+    return { since: null, extendedSince: null, label: 'All time' }
+  }
+
+  const now = new Date()
+  const dayCount = daysForRange(timeRange)
+
+  const since = new Date(now)
+  since.setDate(since.getDate() - dayCount)
+  since.setHours(0, 0, 0, 0)
+
+  const extendedSince = new Date(now)
+  extendedSince.setDate(extendedSince.getDate() - dayCount * 2)
+  extendedSince.setHours(0, 0, 0, 0)
+
+  return { since, extendedSince, label: `${formatDateLabel(since)} - ${formatDateLabel(now)}` }
+}
+
+export function aggregateKpis(
+  members: MemberSummaryRow[],
+  payments: PaymentEventRow[],
+  checkIns: CheckInEventRow[],
+  timeRange: StatsTimeRange,
+): KpiData {
+  const { since } = computeDateRange(timeRange)
+  const now = new Date()
+
+  const inCurrent = (dateStr: string) => !since || new Date(dateStr) >= since
+  const inPrior = (dateStr: string) => {
+    if (!since) return false
+    const priorStart = new Date(since)
+    priorStart.setDate(priorStart.getDate() - daysForRange(timeRange))
+    const d = new Date(dateStr)
+    return d >= priorStart && d < since
+  }
+
+  // Retention: non-cancelled / total
+  const nonCancelledCount = members.filter(m => m.status !== 'cancelled').length
+  const totalCount = members.length
+  const retentionRate = totalCount > 0 ? (nonCancelledCount / totalCount) * 100 : 0
+
+  const retBuckets = createTimeBuckets(since, 8, members.map(m => m.joined_at))
+  const retentionSparkline = retBuckets.map(b => {
+    const atTime = members.filter(m => new Date(m.joined_at) <= b.end)
+    const activeAtTime = atTime.filter(m => m.status !== 'cancelled').length
+    return atTime.length > 0 ? (activeAtTime / atTime.length) * 100 : 0
+  })
+
+  // Revenue
+  const succeeded = payments.filter(p => p.status === 'succeeded')
+  const currentRevCents = succeeded.filter(p => inCurrent(p.created_at)).reduce((s, p) => s + p.amount_cents, 0)
+  const priorRevCents = succeeded.filter(p => inPrior(p.created_at)).reduce((s, p) => s + p.amount_cents, 0)
+
+  const revBuckets = createTimeBuckets(since, 8, succeeded.map(p => p.created_at))
+  const revenueSparkline = revBuckets.map(b =>
+    succeeded
+      .filter(p => { const t = new Date(p.created_at).getTime(); return t >= b.start.getTime() && t < b.end.getTime() })
+      .reduce((s, p) => s + p.amount_cents, 0) / 100,
+  )
+
+  // Visits
+  const currentCheckins = checkIns.filter(c => inCurrent(c.scanned_at))
+  const priorCheckins = checkIns.filter(c => inPrior(c.scanned_at))
+  const periodDays = since ? (now.getTime() - since.getTime()) / 86400000 : 365
+  const weeks = Math.max(periodDays / 7, 1)
+  const avgVisits = currentCheckins.length / weeks
+
+  const visBuckets = createTimeBuckets(since, 8, checkIns.map(c => c.scanned_at))
+  const visitsSparkline = visBuckets.map(b =>
+    checkIns.filter(c => { const t = new Date(c.scanned_at).getTime(); return t >= b.start.getTime() && t < b.end.getTime() }).length,
+  )
+
+  // Signups
+  const currentSignups = members.filter(m => inCurrent(m.joined_at))
+  const priorSignups = members.filter(m => inPrior(m.joined_at))
+
+  const sigBuckets = createTimeBuckets(since, 8, members.map(m => m.joined_at))
+  const signupsSparkline = sigBuckets.map(b =>
+    members.filter(m => { const t = new Date(m.joined_at).getTime(); return t >= b.start.getTime() && t < b.end.getTime() }).length,
+  )
+
+  return {
+    retention: {
+      value: `${retentionRate.toFixed(1)}%`,
+      sparkline: retentionSparkline,
+    },
+    revenue: {
+      value: formatCurrency(currentRevCents),
+      trend: timeRange !== 'all' ? computeTrend(currentRevCents, priorRevCents) : undefined,
+      sparkline: revenueSparkline,
+    },
+    visits: {
+      value: avgVisits.toFixed(1),
+      trend: timeRange !== 'all' ? computeTrend(currentCheckins.length, priorCheckins.length) : undefined,
+      sparkline: visitsSparkline,
+    },
+    signups: {
+      value: formatNumber(currentSignups.length),
+      trend: timeRange !== 'all' ? computeTrend(currentSignups.length, priorSignups.length) : undefined,
+      sparkline: signupsSparkline,
+    },
+  }
+}
+
+export function aggregateRevenueSeries(payments: PaymentEventRow[], timeRange: StatsTimeRange): RevenueBucket[] {
+  const { since } = computeDateRange(timeRange)
+  const currentPayments = since ? payments.filter(p => new Date(p.created_at) >= since) : payments
+  const buckets = createTimeBuckets(since, 8, currentPayments.map(p => p.created_at))
+
+  return buckets.map(b => {
+    const allInBucket = currentPayments.filter(p => {
+      const t = new Date(p.created_at).getTime()
+      return t >= b.start.getTime() && t < b.end.getTime()
+    })
+    const succeededInBucket = allInBucket.filter(p => p.status === 'succeeded')
+    return {
+      name: b.label,
+      gray: allInBucket.reduce((s, p) => s + p.amount_cents, 0) / 100000,
+      revenue: succeededInBucket.reduce((s, p) => s + p.amount_cents, 0) / 100000,
+    }
+  })
+}
+
+export function aggregateRevenueSummary(payments: PaymentEventRow[], timeRange: StatsTimeRange): SummaryRow[] {
+  const { since } = computeDateRange(timeRange)
+  const inCurrent = (d: string) => !since || new Date(d) >= since
+  const inPrior = (d: string) => {
+    if (!since) return false
+    const priorStart = new Date(since)
+    priorStart.setDate(priorStart.getDate() - daysForRange(timeRange))
+    const dt = new Date(d)
+    return dt >= priorStart && dt < since
+  }
+
+  const currentPayments = payments.filter(p => p.status === 'succeeded' && inCurrent(p.created_at))
+  const priorPayments = payments.filter(p => p.status === 'succeeded' && inPrior(p.created_at))
+
+  const types = [...new Set(currentPayments.map(p => p.event_type))]
+  if (types.length === 0) return []
+
+  return types.map(type => {
+    const currentSum = currentPayments.filter(p => p.event_type === type).reduce((s, p) => s + p.amount_cents, 0)
+    const priorSum = priorPayments.filter(p => p.event_type === type).reduce((s, p) => s + p.amount_cents, 0)
+    const trend = computeTrend(currentSum, priorSum)
+
+    return {
+      label: type.charAt(0).toUpperCase() + type.slice(1).replace(/_/g, ' '),
+      value: formatCurrency(currentSum),
+      change: trend ? `${trend.direction === 'up' ? '+' : '-'}${trend.value}%` : '—',
+      positive: trend ? trend.direction === 'up' : true,
+    }
+  })
+}
+
+export function aggregateSignupSeries(members: MemberSummaryRow[], timeRange: StatsTimeRange): SignupBucket[] {
+  const { since } = computeDateRange(timeRange)
+  const currentMembers = since ? members.filter(m => new Date(m.joined_at) >= since) : members
+  const buckets = createTimeBuckets(since, 10, currentMembers.map(m => m.joined_at))
+
+  return buckets.map(b => ({
+    name: b.label,
+    value: currentMembers.filter(m => {
+      const t = new Date(m.joined_at).getTime()
+      return t >= b.start.getTime() && t < b.end.getTime()
+    }).length,
+  }))
+}
+
+export function aggregateHeatmap(checkIns: CheckInEventRow[], timezone: string): number[][] {
+  const grid: number[][] = Array.from({ length: 7 }, () => Array(24).fill(0))
+
+  let tz = timezone
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: tz }).format(new Date())
+  } catch {
+    tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+  }
+
+  const dayMap: Record<string, number> = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 }
+  const formatter = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', hour12: false })
+
+  for (const checkIn of checkIns) {
+    const parts = formatter.formatToParts(new Date(checkIn.scanned_at))
+    const dayStr = parts.find(p => p.type === 'weekday')?.value ?? ''
+    const hourStr = parts.find(p => p.type === 'hour')?.value ?? '0'
+    const dayIdx = dayMap[dayStr]
+    const hour = parseInt(hourStr) % 24
+    if (dayIdx !== undefined && hour >= 0 && hour < 24) {
+      grid[dayIdx][hour]++
+    }
+  }
+
+  return grid
+}
+
+export function aggregateCheckinPeriods(checkIns: CheckInEventRow[], timezone: string): CheckinPeriodRow[] {
+  let tz = timezone
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: tz }).format(new Date())
+  } catch {
+    tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+  }
+
+  const hourFormatter = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', hour12: false })
+
+  let morning = 0
+  let afternoon = 0
+  let evening = 0
+
+  for (const checkIn of checkIns) {
+    const parts = hourFormatter.formatToParts(new Date(checkIn.scanned_at))
+    const hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '0') % 24
+    if (hour >= 6 && hour < 12) morning++
+    else if (hour >= 12 && hour < 17) afternoon++
+    else if (hour >= 17 && hour < 22) evening++
+  }
+
+  const total = morning + afternoon + evening
+
+  return [
+    { label: 'Morning (6\u201311 AM)', value: formatNumber(morning), change: total > 0 ? `${((morning / total) * 100).toFixed(0)}%` : '0%', positive: true },
+    { label: 'Afternoon (12\u20134 PM)', value: formatNumber(afternoon), change: total > 0 ? `${((afternoon / total) * 100).toFixed(0)}%` : '0%', positive: true },
+    { label: 'Evening (5\u20139 PM)', value: formatNumber(evening), change: total > 0 ? `${((evening / total) * 100).toFixed(0)}%` : '0%', positive: true },
+  ]
+}
+
+export function mapRecentCheckIns(rows: RecentCheckInRow[]): RecentCheckIn[] {
+  return rows.map(row => {
+    const member = row.members
+    const activeSub = member.subscriptions?.find(s => s.membership_plans)
+    const planName = activeSub?.membership_plans?.name ?? 'No Plan'
+    const avatarUrl = member.avatar_url ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(member.full_name)}&background=random&color=fff&size=64&bold=true`
+    const dt = new Date(row.scanned_at)
+    const time = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+    const billingStatus = member.billing_status
+      ? member.billing_status.charAt(0).toUpperCase() + member.billing_status.slice(1)
+      : 'Pending'
+
+    return {
+      id: row.id,
+      name: member.full_name,
+      avatarUrl,
+      time,
+      membership: planName,
+      billingStatus,
+    }
+  })
+}

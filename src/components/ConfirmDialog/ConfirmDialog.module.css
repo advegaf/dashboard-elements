@@ -1,0 +1,97 @@
+.overlay {
+  composes: modalOverlay from '../../styles/shared.module.css';
+}
+
+.modal {
+  composes: modalPanel from '../../styles/shared.module.css';
+  width: 420px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 0;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.iconWrap[data-variant="danger"] {
+  background: rgba(239, 68, 68, 0.15);
+  color: #FF9592;
+}
+
+.iconWrap[data-variant="warning"] {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+}
+
+.title {
+  composes: cardTitle from '../../styles/shared.module.css';
+  font-size: 17px;
+}
+
+.body {
+  padding: 16px 24px;
+}
+
+.message {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.field {
+  composes: formField from '../../styles/shared.module.css';
+  margin-top: 14px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 24px 20px;
+}
+
+.cancelBtn {
+  composes: ghostPill from '../../styles/shared.module.css';
+}
+
+.confirmBtn {
+  composes: ghostPill from '../../styles/shared.module.css';
+  font-weight: 500;
+}
+
+.confirmBtn[data-variant="danger"] {
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #FF9592;
+}
+
+.confirmBtn[data-variant="danger"]:hover {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.confirmBtn[data-variant="warning"] {
+  border-color: rgba(234, 179, 8, 0.4);
+  color: #facc15;
+}
+
+.confirmBtn[data-variant="warning"]:hover {
+  border-color: rgba(234, 179, 8, 0.6);
+  background: rgba(234, 179, 8, 0.1);
+}
+
+.confirmBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

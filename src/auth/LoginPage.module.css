@@ -1,0 +1,267 @@
+.logo {
+  width: 48px;
+  margin-bottom: 24px;
+}
+
+.heading {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.045rem;
+  line-height: 34px;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.heading strong {
+  font-weight: 700;
+}
+
+.subtext {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.subtextLink {
+  color: #fff;
+  text-decoration: none;
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.subtextLink:hover {
+  text-decoration: underline;
+}
+
+.tabBar {
+  display: flex;
+  background: url('/texture-btn.png') repeat,
+    linear-gradient(104deg, rgba(253, 253, 253, 0.05) 5%, rgba(240, 240, 228, 0.1) 100%);
+  background-origin: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.tab {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.tab:hover {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.tabActive {
+  composes: tab;
+  background: linear-gradient(104deg, rgba(253, 253, 253, 0.08) 5%, rgba(240, 240, 228, 0.15) 100%);
+  color: #fff;
+}
+
+.tabActive:hover {
+  color: #fff;
+}
+
+.field {
+  composes: formField from '../styles/shared.module.css';
+}
+
+.field span {
+  font-size: 14px;
+}
+
+.field input {
+  height: 48px;
+  font-size: 14px;
+  border-radius: 16px;
+  padding: 12px 16px;
+  background: url('/texture-btn.png') repeat,
+    linear-gradient(104deg, rgba(253, 253, 253, 0.05) 5%, rgba(240, 240, 228, 0.1) 100%);
+  background-origin: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.field input:focus-visible {
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15);
+  outline: none;
+}
+
+.field input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.passwordWrapper {
+  position: relative;
+}
+
+.passwordWrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.passwordToggle:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ctaButton {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  padding: 0 20px;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: linear-gradient(104deg, rgba(253, 253, 253, 0.05) 5%, rgba(240, 240, 228, 0.1) 100%);
+  background-origin: border-box;
+  color: #fff;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  will-change: transform;
+}
+
+.ctaButton::after {
+  content: '';
+  position: absolute;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  top: -2px;
+  left: -2px;
+  border-radius: 1rem;
+  background: url('/texture-btn.png') repeat;
+  pointer-events: none;
+}
+
+.ctaButton:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.ctaButton:active {
+  transform: scale(0.97);
+}
+
+.ctaButton:focus-visible {
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+  outline: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+}
+
+.ctaButton:disabled {
+  opacity: 0.3;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
+
+.forgotLink {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 600;
+  transition: color 0.15s;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.forgotLink:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.passwordRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.footer {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  margin-top: 32px;
+}
+
+.footerLink {
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 0.15s;
+  text-decoration: underline;
+}
+
+.footerLink:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.errorMessage {
+  color: #FF9592;
+  font-size: 13px;
+  text-align: center;
+}
+
+.successMessage {
+  color: #3ED68C;
+  font-size: 13px;
+  text-align: center;
+}
+
+.tab:active,
+.tabActive:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ctaButton,
+  .tab,
+  .tabActive,
+  .field input {
+    transition-duration: 0.01ms !important;
+  }
+}

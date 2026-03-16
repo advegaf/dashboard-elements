@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEDGR</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{warm:'#ede8e2'}}}}</script>
+  <style>
+    body { background: url('./1-c 7680x4320.jpg') center/cover fixed no-repeat }
+    input:focus { outline: none; border-color: rgba(237,232,226,.3); box-shadow: 0 0 0 1px rgba(237,232,226,.1) }
+  </style>
+</head>
+<body class="min-h-screen bg-[#0a0a0a] text-warm antialiased">
+  <div class="fixed inset-0 bg-black/50"></div>
+
+  <a href="#" class="fixed top-6 left-6 z-20 flex items-center gap-1.5 text-sm text-zinc-400 hover:text-warm transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    Back
+  </a>
+
+  <div class="relative z-10 flex items-center justify-center min-h-screen px-4 py-12">
+    <div class="w-full max-w-sm">
+      <div class="flex justify-center mb-6">
+        <svg width="48" height="37" viewBox="0 0 621 482" fill="none"><rect width="621" height="138" fill="#ede8e2"/><rect x="151" y="344" width="470" height="138" fill="#ede8e2"/><rect y="172" width="470" height="138" fill="#ede8e2"/><rect x="495" y="172" width="126" height="138" fill="#ede8e2"/><rect y="344" width="126" height="138" fill="#ede8e2"/></svg>
+      </div>
+
+      <div class="grid">
+        <!-- Login -->
+        <div id="view-login" class="col-start-1 row-start-1 transition-opacity duration-300">
+          <h1 class="text-2xl font-bold text-center mb-2">Log in to LEDGR</h1>
+          <p class="text-sm text-zinc-400 text-center mb-8">Don't have an account? <a href="#" onclick="switchView('signup');return false" class="text-warm hover:underline">Sign up</a></p>
+
+          <div class="flex mb-6 bg-white/[.06] backdrop-blur-md border border-warm/[.06] rounded-xl p-1">
+            <button id="tab-magic" onclick="switchTab('magic')" class="flex-1 text-sm font-medium py-2 px-4 rounded-lg transition-all duration-200 bg-white/[.1] backdrop-blur-sm text-warm">Email</button>
+            <button id="tab-password" onclick="switchTab('password')" class="flex-1 text-sm font-medium py-2 px-4 rounded-lg transition-all duration-200 text-zinc-400 hover:text-zinc-300">Password</button>
+          </div>
+
+          <div class="grid overflow-hidden">
+            <form id="form-magic" class="col-start-1 row-start-1 space-y-4 transition-opacity duration-300" onsubmit="event.preventDefault()">
+              <div>
+                <label class="block text-sm font-medium text-zinc-300 mb-1.5">Email</label>
+                <input type="email" id="magic-email" placeholder="arnold@example.com" required class="w-full px-3.5 py-2.5 bg-white/[.09] border border-warm/[.1] rounded-xl text-warm placeholder-zinc-500 text-sm">
+              </div>
+              <button id="btn-magic" type="submit" disabled class="w-full py-2.5 px-4 font-medium text-sm rounded-xl transition-all duration-200 bg-white/[.08] text-warm/25 border border-warm/[.06] cursor-not-allowed">Send Login Link</button>
+            </form>
+
+            <form id="form-password" class="col-start-1 row-start-1 space-y-4 transition-opacity duration-300 opacity-0 pointer-events-none" onsubmit="event.preventDefault()">
+              <div>
+                <label class="block text-sm font-medium text-zinc-300 mb-1.5">Email</label>
+                <input type="email" id="pass-email" placeholder="arnold@example.com" required class="w-full px-3.5 py-2.5 bg-white/[.09] border border-warm/[.1] rounded-xl text-warm placeholder-zinc-500 text-sm">
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="block text-sm font-medium text-zinc-300">Password</label>
+                  <a href="#" class="text-xs text-zinc-400 hover:text-warm transition-colors">Forgot password?</a>
+                </div>
+                <div class="relative">
+                  <input type="password" id="pass-password" placeholder="Enter your password" required class="w-full px-3.5 py-2.5 bg-white/[.09] border border-warm/[.1] rounded-xl text-warm placeholder-zinc-500 text-sm pr-10">
+                  <button type="button" onclick="togglePw('pass-password','eol','ecl')" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-warm transition-colors">
+                    <svg id="eol" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <svg id="ecl" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                  </button>
+                </div>
+              </div>
+              <button id="btn-password" type="submit" disabled class="w-full py-2.5 px-4 font-medium text-sm rounded-xl transition-all duration-200 bg-white/[.08] text-warm/25 border border-warm/[.06] cursor-not-allowed">Log In</button>
+            </form>
+          </div>
+
+          <p class="text-xs text-zinc-500 text-center mt-6">By signing in, you agree to our <a href="#" class="text-zinc-400 hover:text-warm transition-colors">Terms</a> and <a href="#" class="text-zinc-400 hover:text-warm transition-colors">Privacy Policy</a>.</p>
+        </div>
+
+        <!-- Signup -->
+        <div id="view-signup" class="col-start-1 row-start-1 transition-opacity duration-300 opacity-0 pointer-events-none">
+          <h1 class="text-2xl font-bold text-center mb-2">Create your LEDGR account</h1>
+          <p class="text-sm text-zinc-400 text-center mb-8">Already have an account? <a href="#" onclick="switchView('login');return false" class="text-warm hover:underline">Log in</a></p>
+
+          <form id="form-signup" class="space-y-4" onsubmit="event.preventDefault()">
+            <div>
+              <label class="block text-sm font-medium text-zinc-300 mb-1.5">Email</label>
+              <input type="email" id="signup-email" placeholder="arnold@example.com" required class="w-full px-3.5 py-2.5 bg-white/[.09] border border-warm/[.1] rounded-xl text-warm placeholder-zinc-500 text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-zinc-300 mb-1.5">Password</label>
+              <div class="relative">
+                <input type="password" id="signup-password" placeholder="Create a password" required class="w-full px-3.5 py-2.5 bg-white/[.09] border border-warm/[.1] rounded-xl text-warm placeholder-zinc-500 text-sm pr-10">
+                <button type="button" onclick="togglePw('signup-password','eos','ecs')" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-warm transition-colors">
+                  <svg id="eos" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <svg id="ecs" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-zinc-300 mb-1.5">Confirm Password</label>
+              <input type="password" id="signup-confirm" placeholder="Confirm your password" required class="w-full px-3.5 py-2.5 bg-white/[.09] border border-warm/[.1] rounded-xl text-warm placeholder-zinc-500 text-sm">
+            </div>
+            <button id="btn-signup" type="submit" disabled class="w-full py-2.5 px-4 font-medium text-sm rounded-xl transition-all duration-200 bg-white/[.08] text-warm/25 border border-warm/[.06] cursor-not-allowed">Create Account</button>
+          </form>
+
+          <p class="text-xs text-zinc-500 text-center mt-6">By signing up, you agree to our <a href="#" class="text-zinc-400 hover:text-warm transition-colors">Terms</a> and <a href="#" class="text-zinc-400 hover:text-warm transition-colors">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const toggle = (el, on) => { el.classList.toggle('opacity-0', !on); el.classList.toggle('pointer-events-none', !on) };
+    const btnOn = 'w-full py-2.5 px-4 font-medium text-sm rounded-xl transition-all duration-200 bg-warm/90 text-[#1a1a1a] hover:bg-warm border border-warm/20 cursor-pointer';
+    const btnOff = 'w-full py-2.5 px-4 font-medium text-sm rounded-xl transition-all duration-200 bg-white/[.08] text-warm/25 border border-warm/[.06] cursor-not-allowed';
+    const tabOn = 'flex-1 text-sm font-medium py-2 px-4 rounded-lg transition-all duration-200 bg-white/[.1] backdrop-blur-sm text-warm';
+    const tabOff = 'flex-1 text-sm font-medium py-2 px-4 rounded-lg transition-all duration-200 text-zinc-400 hover:text-zinc-300';
+
+    function switchView(v) {
+      toggle($('view-login'), v === 'login');
+      toggle($('view-signup'), v === 'signup');
+      document.title = (v === 'signup' ? 'Create account' : 'Log in') + ' — LEDGR';
+      try { history.pushState({ view: v }, '', v === 'signup' ? 'ledgr-signup.html' : 'ledgr-login.html') } catch(e) {}
+    }
+
+    window.addEventListener('popstate', e => switchView(e.state?.view || 'login'));
+
+    function switchTab(t) {
+      $('tab-magic').className = t === 'magic' ? tabOn : tabOff;
+      $('tab-password').className = t === 'password' ? tabOn : tabOff;
+      toggle($('form-magic'), t === 'magic');
+      toggle($('form-password'), t === 'password');
+    }
+
+    function togglePw(inputId, openId, closedId) {
+      const inp = $(inputId);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      $(openId).classList.toggle('hidden');
+      $(closedId).classList.toggle('hidden');
+    }
+
+    function setBtn(btn, valid) { btn.disabled = !valid; btn.className = valid ? btnOn : btnOff }
+    function validEmail(el) { return el.value.trim() && el.validity.valid }
+
+    $('magic-email').addEventListener('input', () => setBtn($('btn-magic'), validEmail($('magic-email'))));
+    $('pass-email').addEventListener('input', checkLogin);
+    $('pass-password').addEventListener('input', checkLogin);
+    function checkLogin() { setBtn($('btn-password'), validEmail($('pass-email')) && $('pass-password').value.length > 0) }
+
+    $('signup-email').addEventListener('input', checkSignup);
+    $('signup-password').addEventListener('input', checkSignup);
+    $('signup-confirm').addEventListener('input', checkSignup);
+    function checkSignup() {
+      setBtn($('btn-signup'), validEmail($('signup-email')) && $('signup-password').value.length > 0 && $('signup-password').value === $('signup-confirm').value);
+    }
+
+    // Init
+    if (location.pathname.includes('signup')) switchView('signup');
+    else document.title = 'Log in — LEDGR';
+    history.replaceState({ view: location.pathname.includes('signup') ? 'signup' : 'login' }, '');
+  </script>
+</body>
+</html>

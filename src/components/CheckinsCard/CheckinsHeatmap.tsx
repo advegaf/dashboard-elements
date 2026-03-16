@@ -10,38 +10,22 @@ function formatHour(h: number) {
   return `${h - 12}p`
 }
 
-// Realistic gym check-in data: 7 days × 24 hours
-const data: number[][] = [
-  // Mon
-  [2, 1, 1, 1, 2, 8, 35, 42, 28, 15, 12, 18, 22, 16, 10, 8, 18, 38, 45, 30, 15, 8, 3, 2],
-  // Tue
-  [1, 1, 1, 1, 2, 7, 32, 40, 25, 14, 10, 16, 20, 14, 9, 7, 16, 35, 42, 28, 14, 7, 3, 1],
-  // Wed
-  [2, 1, 1, 2, 2, 9, 38, 44, 30, 16, 13, 19, 24, 18, 12, 9, 20, 40, 48, 32, 16, 9, 4, 2],
-  // Thu
-  [1, 1, 1, 1, 1, 6, 30, 38, 24, 13, 10, 15, 19, 13, 8, 6, 15, 33, 40, 26, 12, 6, 3, 1],
-  // Fri
-  [2, 1, 1, 1, 2, 8, 34, 40, 26, 14, 11, 17, 21, 15, 10, 8, 22, 36, 38, 24, 10, 5, 3, 2],
-  // Sat (Fri night spillover → slightly higher overnight)
-  [3, 2, 2, 1, 1, 2, 5, 12, 22, 28, 25, 20, 16, 12, 8, 6, 4, 3, 3, 2, 1, 1, 2, 3],
-  // Sun (Sat night spillover → slightly higher overnight)
-  [4, 3, 2, 1, 1, 1, 3, 8, 18, 24, 22, 18, 14, 10, 6, 4, 3, 2, 2, 1, 1, 1, 1, 2],
-]
-
-const maxValue = Math.max(...data.flat())
-
 const LABEL_WIDTH = 16
 const LABEL_HEIGHT = 16
-const CELL_W = 11
-const CELL_H = 14
-const GAP = 1.5
+const CELL_W = 13
+const CELL_H = 16
+const GAP = 2
 const COLS = 24
 const ROWS = 7
 
-const svgWidth = LABEL_WIDTH + COLS * (CELL_W + GAP)
+const svgWidth = LABEL_WIDTH + COLS * (CELL_W + GAP) + LABEL_WIDTH
 const svgHeight = ROWS * (CELL_H + GAP) + LABEL_HEIGHT
 
-export function CheckinsHeatmap() {
+interface CheckinsHeatmapProps {
+  data: number[][]
+}
+
+export function CheckinsHeatmap({ data }: CheckinsHeatmapProps) {
   const [hovered, setHovered] = useState<{
     day: number
     hour: number
@@ -49,6 +33,8 @@ export function CheckinsHeatmap() {
     y: number
   } | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
+
+  const maxValue = Math.max(...data.flat(), 1)
 
   return (
     <div ref={wrapperRef} style={{ position: 'relative' }}>
@@ -79,7 +65,7 @@ export function CheckinsHeatmap() {
             x={LABEL_WIDTH + hour * (CELL_W + GAP) + CELL_W / 2}
             y={svgHeight - 2}
             fill="rgba(255,255,255,0.35)"
-            fontSize={7}
+            fontSize={9}
             fontWeight={500}
             textAnchor="middle"
           >
@@ -90,8 +76,7 @@ export function CheckinsHeatmap() {
         {/* Heatmap cells */}
         {data.map((row, dayIdx) =>
           row.map((value, hourIdx) => {
-            const opacity =
-              value === 0 ? 0 : Math.max(0.07, value / maxValue)
+            const opacity = Math.max(0.07, value / maxValue)
             const x = LABEL_WIDTH + hourIdx * (CELL_W + GAP)
             const y = dayIdx * (CELL_H + GAP)
             return (
@@ -102,7 +87,7 @@ export function CheckinsHeatmap() {
                 width={CELL_W}
                 height={CELL_H}
                 rx={2}
-                fill="#22c55e"
+                fill="#22995F"
                 fillOpacity={opacity}
                 stroke={
                   hovered?.day === dayIdx && hovered?.hour === hourIdx
@@ -157,7 +142,7 @@ export function CheckinsHeatmap() {
             zIndex: 10,
           }}
         >
-          {DAYS[hovered.day]} {formatHour(hovered.hour)} —{' '}
+          {DAYS[hovered.day]} {formatHour(hovered.hour)} -{' '}
           {data[hovered.day][hovered.hour]} check-ins
         </div>
       )}
