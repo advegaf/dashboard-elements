@@ -1,5 +1,7 @@
 import { supabase } from './supabase'
 import type { Member, MemberPlan, MemberStatus } from '../data/members'
+import { fallbackAvatarUrl } from '../utils/avatar'
+import { capitalize } from '../utils/strings'
 
 // Cached gym data for the current user
 let cachedGymData: { gymId: string; timezone: string } | null = null
@@ -40,8 +42,11 @@ function resolvePlan(subscriptions: SubscriptionRow[] | null): MemberPlan {
   return planName as MemberPlan
 }
 
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1)
+function throwSupabaseError(error: { code?: string; message: string }, action: string): never {
+  if (error.code === '42501' || error.message.includes('permission')) {
+    throw new Error('Permission denied.')
+  }
+  throw new Error(`Failed to ${action}: ${error.message}`)
 }
 
 function mapDbToMember(row: MemberRow): Member {
@@ -56,7 +61,7 @@ function mapDbToMember(row: MemberRow): Member {
     lastVisit: row.last_visit_at ? row.last_visit_at.slice(0, 10) : '—',
     totalVisits: row.total_visits,
     emergencyContact: row.emergency_contact ?? '',
-    avatarUrl: row.avatar_url ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(row.full_name)}&background=random&color=fff&size=64&bold=true`,
+    avatarUrl: row.avatar_url ?? fallbackAvatarUrl(row.full_name),
     billingStatus: (row.billing_status ? capitalize(row.billing_status) : 'Pending') as Member['billingStatus'],
     nextPayment: row.next_payment ?? '—',
     paymentMethod: row.payment_method ?? '',
@@ -91,18 +96,26 @@ export async function getGymId(): Promise<string> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
-  const { data: profile, error } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('gym_id, gyms(timezone)')
+    .select('gym_id')
     .eq('id', user.id)
     .single()
 
-  if (error || !profile) {
+  if (profileError || !profile) {
     throw new Error('Account setup incomplete — no gym profile found.')
   }
 
-  const gyms = profile.gyms as unknown as { timezone: string } | null
-  cachedGymData = { gymId: profile.gym_id, timezone: gyms?.timezone ?? 'UTC' }
+  const { data: gym } = await supabase
+    .from('gyms')
+    .select('timezone')
+    .eq('id', profile.gym_id)
+    .single()
+
+  cachedGymData = {
+    gymId: profile.gym_id,
+    timezone: gym?.timezone ?? 'UTC',
+  }
   return cachedGymData.gymId
 }
 
@@ -122,10 +135,7 @@ export async function fetchMembers(): Promise<Member[]> {
     .order('created_at', { ascending: false })
 
   if (error) {
-    if (error.code === '42501' || error.message.includes('permission')) {
-      throw new Error('Permission denied.')
-    }
-    throw new Error(`Failed to load members: ${error.message}`)
+    throwSupabaseError(error, 'load members')
   }
 
   if ((!data || data.length === 0)) {
@@ -174,10 +184,7 @@ export async function addMember(memberData: {
     .single()
 
   if (error) {
-    if (error.code === '42501' || error.message.includes('permission')) {
-      throw new Error('Permission denied.')
-    }
-    throw new Error(`Failed to add member: ${error.message}`)
+    throwSupabaseError(error, 'add member')
   }
 
   return mapDbToMember(row as unknown as MemberRow)
@@ -197,10 +204,7 @@ export async function updateMember(id: string, updates: Partial<Member>): Promis
     if (error.code === 'PGRST116') {
       throw new Error('Member not found — it may have been deleted.')
     }
-    if (error.code === '42501' || error.message.includes('permission')) {
-      throw new Error('Permission denied.')
-    }
-    throw new Error(`Failed to update member: ${error.message}`)
+    throwSupabaseError(error, 'update member')
   }
 
   if (!row) {
@@ -217,13 +221,15 @@ export async function bulkUpdateStatus(ids: string[], status: MemberStatus): Pro
     .in('id', ids)
 
   if (error) {
-    if (error.code === '42501' || error.message.includes('permission')) {
-      throw new Error('Permission denied.')
-    }
-    throw new Error(`Failed to update members: ${error.message}`)
+    throwSupabaseError(error, 'update members')
   }
 
-  return fetchMembers()
+  const { data } = await supabase
+    .from('members')
+    .select(SUBSCRIPTION_SELECT)
+    .in('id', ids)
+
+  return (data ?? []).map(row => mapDbToMember(row as unknown as MemberRow))
 }
 
 export async function fetchCheckInHistory(memberId: string): Promise<{ date: string; time: string; type: string }[]> {

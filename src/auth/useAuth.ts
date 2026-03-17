@@ -30,7 +30,10 @@ export function useAuth() {
   const signInWithOtp = useCallback(async (email: string): Promise<boolean> => {
     setActionLoading(true)
     setError(null)
-    const { error } = await supabase.auth.signInWithOtp({ email })
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin + '/dashboard' },
+    })
     setActionLoading(false)
     if (error) {
       setError(error.message)

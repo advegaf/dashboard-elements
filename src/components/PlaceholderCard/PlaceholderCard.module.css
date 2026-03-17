@@ -13,7 +13,7 @@
   left: 10%;
   right: 10%;
   height: 80%;
-  background: radial-gradient(ellipse, rgba(var(--glow, 148, 163, 184), 0.15) 0%, transparent 70%);
+  background: radial-gradient(ellipse, color-mix(in oklch, var(--glow-color, var(--gray-9)) 15%, transparent) 0%, transparent 70%);
   filter: blur(20px);
   pointer-events: none;
   z-index: -1;

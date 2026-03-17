@@ -3,6 +3,7 @@ import { ChevronUp, ChevronDown, Snowflake, X, Mail, Search } from 'lucide-react
 import { useMembersState, useMembersDispatch } from '../../context/MembersContext'
 import { useMembers } from '../../hooks/useMembers'
 import { COLUMN_LABELS, type ColumnKey, type SortableColumn } from '../../data/members'
+import { formatDateJoined } from '../../utils/dates'
 import styles from './MembersTable.module.css'
 
 const COLUMN_ORDER: ColumnKey[] = ['name', 'email', 'phone', 'plan', 'status', 'joined', 'lastVisit', 'totalVisits', 'revenue', 'notes', 'actions']
@@ -11,8 +12,7 @@ function formatJoined(iso: string): string {
   if (!iso || iso === '—') return iso
   const d = new Date(iso)
   if (isNaN(d.getTime())) return iso
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+  return formatDateJoined(d)
 }
 
 interface Props {

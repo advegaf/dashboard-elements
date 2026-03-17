@@ -18,22 +18,39 @@ export function RecentCheckInsCard({ checkIns, maxRows, loading, error }: Recent
     : undefined
 
   return (
-    <div className={styles.card} style={{ '--glow': '148, 163, 184' } as React.CSSProperties}>
+    <div className={styles.card} style={{ '--glow-color': 'var(--gray-9)' } as React.CSSProperties}>
       <div className={styles.titleRow}>
         <h2 className={styles.title}>Recent Check-Ins</h2>
         <p className={styles.subtitle}>Member activity log &middot; {today}</p>
       </div>
 
       {loading ? (
-        <div style={{ padding: '16px 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} width="100%" height={40} borderRadius={4} />
-          ))}
+        <div style={{ padding: '16px 0' }}>
+          {/* Header row */}
+          <div style={{ display: 'flex', gap: 16, padding: '8px 0', marginBottom: 8 }}>
+            <Skeleton width={120} height={10} />
+            <Skeleton width={90} height={10} />
+            <Skeleton width={80} height={10} />
+            <Skeleton width={60} height={10} />
+          </div>
+          {/* Data rows */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
+                <Skeleton width={32} height={32} borderRadius="50%" />
+                <Skeleton width={110} height={12} />
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: 16 }}>
+                  <Skeleton width={70} height={12} />
+                  <Skeleton width={60} height={20} borderRadius={9999} />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ) : error ? (
-        <p style={{ color: '#FF9592', padding: '16px 0', fontSize: 13 }}>Failed to load recent check-ins.</p>
+        <p style={{ color: 'var(--color-danger)', padding: '16px 0', fontSize: 13 }}>Failed to load recent check-ins.</p>
       ) : checkIns.length === 0 ? (
-        <p style={{ color: 'rgba(255,255,255,0.5)', padding: '16px 0', fontSize: 13 }}>No check-ins recorded yet.</p>
+        <p style={{ color: 'var(--color-text-muted)', padding: '16px 0', fontSize: 13 }}>No check-ins recorded yet.</p>
       ) : (
         <div className={styles.tableContainer}>
           <div className={styles.tableWrapper} style={wrapperStyle}>
@@ -66,7 +83,7 @@ export function RecentCheckInsCard({ checkIns, maxRows, loading, error }: Recent
                     <td>
                       <span
                         className={styles.paymentPill}
-                        data-status={row.billingStatus === 'Current' ? 'processed' : row.billingStatus === 'Past due' ? 'failed' : 'pending'}
+                        data-status={row.billingStatus === 'Current' ? 'processed' : row.billingStatus === 'Past Due' ? 'failed' : 'pending'}
                       >
                         {row.billingStatus}
                       </span>

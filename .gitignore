@@ -2,5 +2,9 @@ node_modules
 dist
 .env
 .env.local
+.env.production
+.DS_Store
+.netlify/
+supabase/.env
 supabase/.temp/
 supabase/.branches/

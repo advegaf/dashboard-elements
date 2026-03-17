@@ -152,13 +152,15 @@ function membersReducer(state: MembersState, action: MembersAction): MembersStat
         mutating: false,
         members: state.members.map(m => m.id === action.id ? { ...m, ...action.updates } : m),
       }
-    case 'BULK_UPDATE_STATUS':
+    case 'BULK_UPDATE_STATUS': {
+      const updateMap = new Map(action.members.map(m => [m.id, m]))
       return {
         ...state,
         mutating: false,
-        members: action.members,
+        members: state.members.map(m => updateMap.get(m.id) ?? m),
         selectedIds: new Set(),
       }
+    }
     default:
       return state
   }

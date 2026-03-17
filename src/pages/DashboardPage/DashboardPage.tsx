@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { DashboardHeader } from '../../components/DashboardHeader/DashboardHeader'
-import { KpiCard } from '../../components/KpiCard/KpiCard'
+import { ChurnRiskCard } from '../../components/ChurnRiskCard/ChurnRiskCard'
 import { SalesCard } from '../../components/SalesCard/SalesCard'
 import { CheckinsCard } from '../../components/CheckinsCard/CheckinsCard'
 import { SignupsCard } from '../../components/SignupsCard/SignupsCard'
-import { PlaceholderCard } from '../../components/PlaceholderCard/PlaceholderCard'
+import { MrrCard } from '../../components/MrrCard/MrrCard'
+import { RetentionCard } from '../../components/RetentionCard/RetentionCard'
+import { FailedPaymentsCard } from '../../components/FailedPaymentsCard/FailedPaymentsCard'
 import { CopilotCard } from '../../components/CopilotCard/CopilotCard'
 import { RecentCheckInsCard } from '../../components/RecentCheckInsCard/RecentCheckInsCard'
 import { useDashboardData } from '../../hooks/useDashboardData'
@@ -38,8 +40,8 @@ const kpiRowVariants = {
 export function DashboardPage() {
   const [timeRange, setTimeRange] = useState<StatsTimeRange>('30d')
   const {
-    kpis, revenueSeries, revenueSummary, signupSeries,
-    heatmapData, checkinPeriods, recentCheckIns,
+    kpis, revenueSeries, revenueSlices, signupSeries, retentionSeries,
+    heatmapData, checkinPeriods, recentCheckIns, failedPayments,
     dateRange, loading, errors,
   } = useDashboardData(timeRange)
 
@@ -59,35 +61,30 @@ export function DashboardPage() {
 
       <motion.div className={styles.kpiRow} variants={kpiRowVariants}>
         <motion.div variants={itemVariants}>
-          <KpiCard
-            title="Retention Rate"
-            value={kpis?.retention.value ?? '—'}
-            trend={kpis?.retention.trend}
-            sparklineData={kpis?.retention.sparkline}
-            sparklineColor="#A855F7"
-            glowColor="168, 85, 247"
-            loading={loading}
-          />
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <KpiCard
-            title="MRR"
+          <MrrCard
+            data={revenueSeries}
             value={kpis?.revenue.value ?? '—'}
             trend={kpis?.revenue.trend}
-            sparklineData={kpis?.revenue.sparkline}
-            sparklineColor="#10B981"
-            glowColor="16, 185, 129"
+            dateRange={dateRange}
             loading={loading}
+            error={errors.payments}
           />
         </motion.div>
         <motion.div variants={itemVariants}>
-          <KpiCard
-            title="Avg Visits/Week"
-            value={kpis?.visits.value ?? '—'}
-            trend={kpis?.visits.trend}
-            sparklineData={kpis?.visits.sparkline}
-            sparklineColor="#3B82F6"
-            glowColor="59, 130, 246"
+          <RetentionCard
+            data={retentionSeries}
+            rate={kpis?.retention.value ?? '—'}
+            memberCount={kpis?.retention.memberCount ?? 0}
+            trend={kpis?.retention.trend}
+            dateRange={dateRange}
+            loading={loading}
+            error={errors.members}
+          />
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <ChurnRiskCard
+            data={kpis?.churnRisk ?? null}
+            dateRange={dateRange}
             loading={loading}
           />
         </motion.div>
@@ -105,8 +102,7 @@ export function DashboardPage() {
 
       <motion.div className={styles.vizRow} variants={itemVariants}>
         <SalesCard
-          data={revenueSeries}
-          summary={revenueSummary}
+          data={revenueSlices}
           dateRange={dateRange}
           loading={loading}
           error={errors.payments}
@@ -118,7 +114,12 @@ export function DashboardPage() {
           loading={loading}
           error={errors.checkIns}
         />
-        <PlaceholderCard />
+        <FailedPaymentsCard
+          data={failedPayments}
+          dateRange={dateRange}
+          loading={loading}
+          error={errors.payments}
+        />
       </motion.div>
 
       <motion.div className={styles.bottomRow} variants={itemVariants}>

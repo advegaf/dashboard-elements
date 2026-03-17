@@ -11,7 +11,7 @@
   left: 10%;
   right: 10%;
   height: 80%;
-  background: radial-gradient(ellipse, rgba(148, 163, 184, 0.3) 0%, transparent 70%);
+  background: radial-gradient(ellipse, color-mix(in oklch, var(--gray-9) 30%, transparent) 0%, transparent 70%);
   filter: blur(20px);
   pointer-events: none;
   z-index: 0;
@@ -26,7 +26,7 @@
 }
 
 .table thead {
-  background: rgba(0, 0, 0, 0.01);
+  background: oklch(0 0 0 / 0.01);
   backdrop-filter: blur(24px);
 }
 
@@ -34,12 +34,12 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--color-text-subtle);
   font-weight: 600;
   padding: 8px 12px 10px;
   text-align: left;
   white-space: nowrap;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid var(--color-border);
   user-select: none;
 }
 
@@ -48,7 +48,7 @@
 }
 
 .sortable:hover {
-  color: rgba(255, 255, 255, 0.6);
+  color: oklch(0.933 0 0 / 0.6);
 }
 
 .thContent {
@@ -68,7 +68,7 @@
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border: 1.5px solid var(--color-border-strong);
   border-radius: 4px;
   background: transparent;
   cursor: pointer;
@@ -77,8 +77,8 @@
 }
 
 .checkboxCol input[type="checkbox"]:checked {
-  background: #fff;
-  border-color: #fff;
+  background: var(--color-text);
+  border-color: var(--color-text);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
@@ -86,15 +86,15 @@
 }
 
 .checkboxCol input[type="checkbox"]:hover {
-  border-color: rgba(255, 255, 255, 0.6);
+  border-color: oklch(0.933 0 0 / 0.6);
 }
 
 .table td {
   padding: 11px 12px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   white-space: nowrap;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .table tbody tr {
@@ -103,11 +103,11 @@
 }
 
 .table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: oklch(0.933 0 0 / 0.04);
 }
 
 .selectedRow {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: var(--color-surface-hover) !important;
 }
 
 /* Member Cell */
@@ -126,18 +126,18 @@
 }
 
 .memberName {
-  color: #fff;
+  color: var(--color-text);
   font-weight: 500;
 }
 
 /* Pills */
 .membershipPill {
   display: inline-block;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--color-border);
   border-radius: 9999px;
   padding: 3px 10px;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
+  color: oklch(0.933 0 0 / 0.6);
 }
 
 .statusPill {
@@ -145,7 +145,7 @@
 }
 
 .muted {
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: var(--color-text-subtle) !important;
 }
 
 .notesCell {
@@ -178,18 +178,18 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.5);
+  background: oklch(0.933 0 0 / 0.06);
+  color: var(--color-text-muted);
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .actionBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: oklch(0.933 0 0 / 0.1);
+  color: var(--color-text);
+  border-color: var(--color-text-ghost);
 }
 
 /* Pagination */
@@ -198,14 +198,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--color-surface-hover);
   position: relative;
   z-index: 1;
 }
 
 .paginationInfo {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--color-text-subtle);
 }
 
 .paginationControls {
@@ -216,10 +216,10 @@
 
 .rowsSelect {
   padding: 5px 28px 5px 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: oklch(0.933 0 0 / 0.06);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  color: rgba(255, 255, 255, 0.6);
+  color: oklch(0.933 0 0 / 0.6);
   font-size: 12px;
   font-family: inherit;
   cursor: pointer;
@@ -231,8 +231,8 @@
 }
 
 .rowsSelect option {
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
 }
 
 .pageButtons {
@@ -242,10 +242,10 @@
 
 .pageButtons button {
   padding: 5px 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: oklch(0.933 0 0 / 0.04);
+  border: 1px solid var(--color-surface-hover);
   border-radius: 6px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
   font-size: 12px;
   font-family: inherit;
   cursor: pointer;
@@ -253,8 +253,8 @@
 }
 
 .pageButtons button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: var(--color-surface-hover);
+  color: var(--color-text);
 }
 
 .pageButtons button:disabled {
@@ -263,9 +263,9 @@
 }
 
 .activePage {
-  background: rgba(255, 255, 255, 0.12) !important;
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: var(--color-border) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-text-ghost) !important;
 }
 
 /* Empty State */
@@ -275,13 +275,13 @@
 }
 
 .emptyIcon {
-  color: rgba(255, 255, 255, 0.15);
+  color: var(--color-surface-strong);
   margin-bottom: 12px;
 }
 
 .emptyText {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-muted);
   margin-bottom: 12px;
 }
 

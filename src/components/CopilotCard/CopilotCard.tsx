@@ -9,9 +9,9 @@ export function CopilotCard() {
   const today = formatDate(new Date())
 
   return (
-    <div className={styles.card} style={{ '--glow': '148, 163, 184' } as React.CSSProperties}>
+    <div className={styles.card} style={{ '--glow-color': 'var(--gray-9)' } as React.CSSProperties}>
       <div className={styles.titleRow}>
-        <h2 className={styles.title}>LEDGR Copilot</h2>
+        <h2 className={styles.title}>Copilot</h2>
         <p className={styles.subtitle}>{today}</p>
       </div>
 

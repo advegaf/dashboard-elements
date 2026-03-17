@@ -8,6 +8,13 @@ import styles from './LoginPage.module.css'
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+const ALLOWED_MAGIC_LINK_EMAILS = [
+  'advegaf@gmail.com',
+  'vegathedev@gmail.com',
+  'srkhan4@cougarnet.uh.edu',
+  'gerardo@invncible.com',
+]
+
 function LedgrLogo() {
   return (
     <svg className={styles.logo} viewBox="0 0 621 482" fill="none">
@@ -46,6 +53,7 @@ export function LoginPage() {
 
   const [magicLinkSent, setMagicLinkSent] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null)
 
   const isLoginValid = loginMethod === 'magic-link'
     ? emailRegex.test(loginEmail)
@@ -65,6 +73,11 @@ export function LoginPage() {
     e.preventDefault()
     clearError()
     if (loginMethod === 'magic-link') {
+      if (!ALLOWED_MAGIC_LINK_EMAILS.includes(loginEmail.toLowerCase())) {
+        setLocalError('Magic link is not available for this email')
+        return
+      }
+      setLocalError(null)
       const ok = await signInWithOtp(loginEmail)
       if (ok) setMagicLinkSent(true)
     } else {
@@ -114,13 +127,13 @@ export function LoginPage() {
             <div className={styles.tabBar}>
               <button
                 className={loginMethod === 'password' ? styles.tabActive : styles.tab}
-                onClick={() => { setLoginMethod('password'); clearError(); setMagicLinkSent(false) }}
+                onClick={() => { setLoginMethod('password'); clearError(); setLocalError(null); setMagicLinkSent(false) }}
               >
                 Password
               </button>
               <button
                 className={loginMethod === 'magic-link' ? styles.tabActive : styles.tab}
-                onClick={() => { setLoginMethod('magic-link'); clearError(); setResetSent(false) }}
+                onClick={() => { setLoginMethod('magic-link'); clearError(); setLocalError(null); setResetSent(false) }}
               >
                 Magic Link
               </button>
@@ -167,7 +180,7 @@ export function LoginPage() {
                 </div>
               )}
 
-              {error && <p className={styles.errorMessage}>{error}</p>}
+              {(error || localError) && <p className={styles.errorMessage}>{error || localError}</p>}
               {magicLinkSent && <p className={styles.successMessage}>Magic link sent! Check your email.</p>}
               {resetSent && <p className={styles.successMessage}>Password reset link sent! Check your email.</p>}
 

@@ -37,8 +37,8 @@
   justify-content: center;
   gap: 4px;
   padding: 20px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
@@ -52,15 +52,15 @@
   left: 0%;
   right: 0%;
   height: 80%;
-  background: radial-gradient(ellipse, rgba(var(--stat-color), 0.15) 0%, transparent 70%);
+  background: radial-gradient(ellipse, color-mix(in oklch, var(--stat-color) 15%, transparent) 0%, transparent 70%);
   filter: blur(20px);
   pointer-events: none;
   z-index: -1;
 }
 
 .preview:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-border-hover);
+  background: var(--color-surface-hover);
 }
 
 .previewDisabled {
@@ -71,13 +71,13 @@
 .previewLabel {
   font-size: 12px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   text-align: center;
 }
 
 .previewSubtitle {
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--color-text-subtle);
 }
 
 .previewBadge {
@@ -87,6 +87,6 @@
   font-size: 9px;
   padding: 2px 6px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.4);
+  background: oklch(0.933 0 0 / 0.1);
+  color: oklch(0.933 0 0 / 0.4);
 }

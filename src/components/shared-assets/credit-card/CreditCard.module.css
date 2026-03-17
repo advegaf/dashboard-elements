@@ -1,0 +1,180 @@
+.creditCard {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1.586;
+  margin: 0 auto;
+  border-radius: 12px;
+  background: oklch(0.933 0 0 / 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid oklch(0.933 0 0 / 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.creditCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    oklch(0.933 0 0 / 0.06) 0%,
+    transparent 50%,
+    oklch(0.933 0 0 / 0.03) 100%
+  );
+  pointer-events: none;
+}
+
+/* Zone 1: Brand top-right */
+.brandRow {
+  text-align: right;
+}
+
+.brand {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(0.933 0 0 / 0.35);
+}
+
+/* Zone 2: Chip vertically centered */
+.middle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.chip {
+  width: 36px;
+  height: 26px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, oklch(0.75 0.12 85) 0%, oklch(0.65 0.10 75) 100%);
+  border: 1px solid oklch(0.933 0 0 / 0.1);
+  position: relative;
+}
+
+/* Chip 6-pad grid: horizontal center line */
+.chip::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: oklch(0.5 0.08 80 / 0.3);
+}
+
+/* Chip 6-pad grid: two vertical lines */
+.chip::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 12px;
+  width: 1px;
+  background: oklch(0.5 0.08 80 / 0.3);
+  box-shadow: 12px 0 0 0 oklch(0.5 0.08 80 / 0.3);
+}
+
+/* Zone 3: Bottom — dots + cardholder info */
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Card number dots */
+.dots {
+  display: flex;
+  gap: 16px;
+}
+
+.dotGroup {
+  display: flex;
+  gap: 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: oklch(0.933 0 0 / 0.3);
+}
+
+.lastFour {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: oklch(0.933 0 0 / 0.4);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* Bottom info row */
+.bottomInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.cardholder {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(0.933 0 0 / 0.4);
+  font-weight: 500;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-end;
+}
+
+.metaLabel {
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(0.933 0 0 / 0.3);
+}
+
+.metaValue {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: oklch(0.933 0 0 / 0.4);
+  font-weight: 500;
+}
+
+/* Network logo — pure CSS circles */
+.networkLogo {
+  display: flex;
+  position: relative;
+  width: 28px;
+  height: 18px;
+}
+
+.networkCircle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  opacity: 0.3;
+}
+
+.networkCircle:first-child {
+  left: 0;
+  background: oklch(0.7 0.15 25);
+}
+
+.networkCircle:last-child {
+  left: 10px;
+  background: oklch(0.75 0.15 75);
+}

@@ -8,18 +8,18 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #000;
+  background-color: var(--color-bg);
 }
 
 .layout {
   height: 100vh;
-  background: #000;
+  background: var(--color-bg);
 }
 
 .appLayout {
   display: flex;
   height: 100vh;
-  background: #000;
+  background: var(--color-bg);
   gap: 0;
 }
 
@@ -38,16 +38,16 @@ body {
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.025) 0%,
+      var(--color-surface-subtle) 0%,
       transparent 35%
     ),
-    #0f0f0f;
+    var(--color-bg-raised);
   margin: 8px;
-  border: 1px solid #1d1d1d;
+  border: 1px solid var(--gray-4);
   border-radius: 12px;
 
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  scrollbar-color: var(--color-surface-strong) transparent;
 }
 
 .contentArea::-webkit-scrollbar {
@@ -59,6 +59,6 @@ body {
 }
 
 .contentArea::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--color-surface-strong);
   border-radius: 2px;
 }

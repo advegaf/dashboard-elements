@@ -4,7 +4,8 @@
   overflow: hidden;
   width: 100%;
   padding: 28px;
-  color: #fff;
+  color: var(--color-text);
+  transition: --glow-color 0.3s ease;
 }
 
 .card::before {
@@ -14,7 +15,7 @@
   left: 10%;
   right: 10%;
   height: 80%;
-  background: radial-gradient(ellipse, rgba(var(--glow, 148, 163, 184), 0.3) 0%, transparent 70%);
+  background: radial-gradient(ellipse, color-mix(in oklch, var(--glow-color, var(--gray-9)) 20%, transparent) 0%, transparent 70%);
   filter: blur(20px);
   pointer-events: none;
   z-index: -1;
@@ -52,7 +53,7 @@
 }
 
 .tableWrapper::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--color-surface-strong);
   border-radius: 2px;
 }
 
@@ -63,7 +64,7 @@
   left: 0;
   right: 0;
   height: 48px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  background: linear-gradient(transparent, oklch(0 0 0 / 0.6));
   pointer-events: none;
   border-radius: 0 0 12px 12px;
 }
@@ -79,7 +80,7 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  background: rgba(0, 0, 0, 0.01);
+  background: oklch(0 0 0 / 0.01);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: 12px 12px 0 0;
@@ -89,12 +90,12 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--color-text-subtle);
   font-weight: 600;
   padding: 8px 12px 10px;
   text-align: left;
   white-space: nowrap;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .table th:first-child {
@@ -108,7 +109,7 @@
 .table td {
   padding: 11px 12px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary);
   white-space: nowrap;
 }
 
@@ -117,11 +118,11 @@
 }
 
 .table tbody td {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: oklch(0.933 0 0 / 0.04);
 }
 
 .table tbody tr:last-child td:first-child {
@@ -148,18 +149,18 @@
 }
 
 .memberName {
-  color: #fff;
+  color: var(--color-text);
   font-weight: 500;
 }
 
 /* Membership Pill */
 .membershipPill {
   display: inline-block;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--color-border);
   border-radius: 9999px;
   padding: 3px 10px;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
+  color: oklch(0.933 0 0 / 0.6);
 }
 
 /* Payment Pill */
@@ -168,16 +169,21 @@
 }
 
 .paymentPill[data-status="processed"] {
-  background: rgba(34, 197, 94, 0.15);
-  color: #3ED68C;
+  background: color-mix(in oklch, var(--color-success) 15%, transparent);
+  color: var(--color-success);
 }
 
 .paymentPill[data-status="failed"] {
-  background: rgba(239, 68, 68, 0.15);
-  color: #FF9592;
+  background: color-mix(in oklch, var(--color-danger) 15%, transparent);
+  color: var(--color-danger);
+}
+
+.paymentPill[data-status="pending"] {
+  background: color-mix(in oklch, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
 }
 
 /* Card Number */
 .cardNumber {
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--color-text-subtle);
 }

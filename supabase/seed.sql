@@ -80,10 +80,127 @@ INSERT INTO auth.identities (
   now()
 );
 
--- ── 3. Owner Profile ───────────────────────────────────────
+-- ── 3. Owner Profiles ────────────────────────────────────
 
 INSERT INTO profiles (id, gym_id, role, full_name, email)
 VALUES ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'owner', 'Angel Vega', 'admin@ledgrbilling.com');
+
+-- ── 3b. Magic Link Owner: advegaf@gmail.com ──────────────
+
+INSERT INTO auth.users (
+  id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, confirmation_token, recovery_token,
+  email_change, email_change_token_new, phone,
+  raw_app_meta_data, raw_user_meta_data,
+  is_sso_user, created_at, updated_at
+) VALUES (
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001',
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated', 'authenticated',
+  'advegaf@gmail.com',
+  crypt('password123', gen_salt('bf')),
+  now(), '', '', '', '', NULL,
+  '{"provider":"email","providers":["email"]}',
+  '{"full_name":"Angel Vega"}',
+  false, now(), now()
+);
+
+INSERT INTO auth.identities (
+  id, user_id, provider_id, identity_data, provider,
+  last_sign_in_at, created_at, updated_at
+) VALUES (
+  gen_random_uuid(),
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001',
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001',
+  jsonb_build_object(
+    'sub', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001',
+    'email', 'advegaf@gmail.com',
+    'email_verified', true,
+    'phone_verified', false
+  ),
+  'email', now(), now(), now()
+);
+
+INSERT INTO profiles (id, gym_id, role, full_name, email)
+VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001', '11111111-1111-1111-1111-111111111111', 'owner', 'Angel Vega', 'advegaf@gmail.com');
+
+-- ── 3c. Magic Link Owner: srkhan4@cougarnet.uh.edu ───────
+
+INSERT INTO auth.users (
+  id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, confirmation_token, recovery_token,
+  email_change, email_change_token_new, phone,
+  raw_app_meta_data, raw_user_meta_data,
+  is_sso_user, created_at, updated_at
+) VALUES (
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002',
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated', 'authenticated',
+  'srkhan4@cougarnet.uh.edu',
+  crypt('password123', gen_salt('bf')),
+  now(), '', '', '', '', NULL,
+  '{"provider":"email","providers":["email"]}',
+  '{"full_name":"SR Khan"}',
+  false, now(), now()
+);
+
+INSERT INTO auth.identities (
+  id, user_id, provider_id, identity_data, provider,
+  last_sign_in_at, created_at, updated_at
+) VALUES (
+  gen_random_uuid(),
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002',
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002',
+  jsonb_build_object(
+    'sub', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002',
+    'email', 'srkhan4@cougarnet.uh.edu',
+    'email_verified', true,
+    'phone_verified', false
+  ),
+  'email', now(), now(), now()
+);
+
+INSERT INTO profiles (id, gym_id, role, full_name, email)
+VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002', '11111111-1111-1111-1111-111111111111', 'owner', 'SR Khan', 'srkhan4@cougarnet.uh.edu');
+
+-- ── 3d. Magic Link Owner: vegathedev@gmail.com ────────────
+
+INSERT INTO auth.users (
+  id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, confirmation_token, recovery_token,
+  email_change, email_change_token_new, phone,
+  raw_app_meta_data, raw_user_meta_data,
+  is_sso_user, created_at, updated_at
+) VALUES (
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003',
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated', 'authenticated',
+  'vegathedev@gmail.com',
+  crypt('password123', gen_salt('bf')),
+  now(), '', '', '', '', NULL,
+  '{"provider":"email","providers":["email"]}',
+  '{"full_name":"Angel Vega"}',
+  false, now(), now()
+);
+
+INSERT INTO auth.identities (
+  id, user_id, provider_id, identity_data, provider,
+  last_sign_in_at, created_at, updated_at
+) VALUES (
+  gen_random_uuid(),
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003',
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003',
+  jsonb_build_object(
+    'sub', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003',
+    'email', 'vegathedev@gmail.com',
+    'email_verified', true,
+    'phone_verified', false
+  ),
+  'email', now(), now(), now()
+);
+
+INSERT INTO profiles (id, gym_id, role, full_name, email)
+VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003', '11111111-1111-1111-1111-111111111111', 'owner', 'Angel Vega', 'vegathedev@gmail.com');
 
 -- ── 4. Membership Plans ────────────────────────────────────
 

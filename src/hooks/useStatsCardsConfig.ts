@@ -10,7 +10,6 @@ export type StatCardKey =
   | 'pastDue'
   | 'avgVisitsPerWeek'
   | 'revenueInPeriod'
-  | 'retentionRate'
 
 export interface StatCardConfig {
   key: StatCardKey
@@ -20,16 +19,15 @@ export interface StatCardConfig {
 }
 
 export const ALL_CARD_TYPES: StatCardConfig[] = [
-  { key: 'total', label: 'Total Members', color: '148,163,184', timeAware: false },
-  { key: 'active', label: 'Active Members', color: '34,197,94', timeAware: false },
-  { key: 'frozen', label: 'Frozen Members', color: '234,179,8', timeAware: false },
-  { key: 'cancelled', label: 'Cancelled Members', color: '239,68,68', timeAware: false },
-  { key: 'newInPeriod', label: 'New Members', color: '148,163,184', timeAware: true },
-  { key: 'atRisk', label: 'Members at Risk', color: '249,115,22', timeAware: false },
-  { key: 'pastDue', label: 'Past Due', color: '239,68,68', timeAware: false },
-  { key: 'avgVisitsPerWeek', label: 'Avg Visits/Week', color: '59,130,246', timeAware: false },
-  { key: 'revenueInPeriod', label: 'Revenue this Period', color: '16,185,129', timeAware: true },
-  { key: 'retentionRate', label: 'Retention Rate', color: '168,85,247', timeAware: true },
+  { key: 'total', label: 'Total Members', color: 'var(--gray-9)', timeAware: false },
+  { key: 'active', label: 'Active Members', color: 'var(--color-success)', timeAware: false },
+  { key: 'frozen', label: 'Frozen Members', color: 'var(--color-warning)', timeAware: false },
+  { key: 'cancelled', label: 'Cancelled Members', color: 'var(--color-danger)', timeAware: false },
+  { key: 'newInPeriod', label: 'New Members', color: 'var(--gray-9)', timeAware: true },
+  { key: 'atRisk', label: 'Members at Risk', color: 'var(--color-urgency)', timeAware: false },
+  { key: 'pastDue', label: 'Past Due', color: 'var(--color-danger)', timeAware: false },
+  { key: 'avgVisitsPerWeek', label: 'Avg Visits/Week', color: 'var(--color-info)', timeAware: false },
+  { key: 'revenueInPeriod', label: 'Revenue this Period', color: 'var(--color-revenue)', timeAware: true },
 ]
 
 const STORAGE_KEY = 'members-stats-cards-config'

@@ -4,7 +4,10 @@
   overflow: hidden;
   width: 100%;
   padding: 28px;
-  color: #fff;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  transition: --glow-color 0.3s ease;
 }
 
 .card::before {
@@ -14,7 +17,7 @@
   left: 10%;
   right: 10%;
   height: 80%;
-  background: radial-gradient(ellipse, rgba(var(--glow, 34, 197, 94), 0.3) 0%, transparent 70%);
+  background: radial-gradient(ellipse, color-mix(in oklch, var(--glow-color, var(--gray-9)) 20%, transparent) 0%, transparent 70%);
   filter: blur(20px);
   pointer-events: none;
   z-index: -1;
@@ -37,62 +40,17 @@
 .description {
   font-size: 14px;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 20px;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+  max-width: 85%;
 }
 
 .description strong {
-  color: #fff;
+  color: var(--color-text);
   font-weight: 600;
 }
 
-/* Summary Table */
-.summaryTable {
-  margin-top: 20px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 4px 0;
-}
-
-.summaryRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 11px 16px;
-}
-
-.summaryRow + .summaryRow {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.rowLeft {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.rowLabel {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.rowRight {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.rowValue {
-  font-size: 13px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.rowChange {
-  font-size: 12px;
-  font-weight: 500;
-  min-width: 72px;
-  text-align: right;
-  color: rgba(255, 255, 255, 0.5);
+/* Summary Table spacing */
+.summaryTableSpacing {
+  margin-top: auto;
 }

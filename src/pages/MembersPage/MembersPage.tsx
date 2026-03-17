@@ -8,6 +8,7 @@ import { MembersStatsRow } from '../../components/MembersStatsRow/MembersStatsRo
 import { MembersFilterBar } from '../../components/MembersFilterBar/MembersFilterBar'
 import { MembersTable } from '../../components/MembersTable/MembersTable'
 import { MembersTableSkeleton } from '../../components/MembersTable/MembersTableSkeleton'
+import { Skeleton } from '../../components/ui/Skeleton/Skeleton'
 import { BulkActionsBar } from '../../components/BulkActionsBar/BulkActionsBar'
 import { MemberDetailDrawer } from '../../components/MemberDetailDrawer/MemberDetailDrawer'
 import { AddMemberModal } from '../../components/AddMemberModal/AddMemberModal'
@@ -28,6 +29,42 @@ interface ConfirmState {
   onConfirm: (reason?: string) => void
 }
 
+function MembersStatsRowSkeleton() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          style={{
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+            borderRadius: 16,
+            padding: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+          }}
+        >
+          <Skeleton width={100} height={14} />
+          <Skeleton width={60} height={28} />
+          <Skeleton width={80} height={12} />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function MembersFilterBarSkeleton() {
+  return (
+    <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center' }}>
+      <Skeleton width={320} height={38} borderRadius={12} />
+      <Skeleton width={100} height={38} borderRadius={12} />
+      <Skeleton width={100} height={38} borderRadius={12} />
+      <Skeleton width={100} height={38} borderRadius={12} />
+    </div>
+  )
+}
+
 export function MembersPage() {
   const state = useMembersState()
   const dispatch = useMembersDispatch()
@@ -43,96 +80,57 @@ export function MembersPage() {
     exportMembersCsv(selected, 'ledgr-members-selected')
   }
 
-  function handleRequestFreeze(memberId: string) {
+  function handleMemberAction(memberId: string, action: 'freeze' | 'cancel') {
     const member = state.members.find(m => m.id === memberId)
     if (!member) return
+    const isFreeze = action === 'freeze'
+    const status = isFreeze ? 'Frozen' : 'Cancelled'
+    const pastTense = isFreeze ? 'frozen' : 'cancelled'
+
     setConfirmDialog({
-      title: 'Freeze Membership',
-      message: `Are you sure you want to freeze ${member.name}'s membership? They will not be able to access the facility while frozen.`,
-      confirmLabel: 'Freeze Membership',
-      confirmVariant: 'warning',
+      title: `${isFreeze ? 'Freeze' : 'Cancel'} Membership`,
+      message: `Are you sure you want to ${action} ${member.name}'s membership? ${isFreeze ? 'They will not be able to access the facility while frozen.' : 'This action cannot be easily undone.'}`,
+      confirmLabel: `${isFreeze ? 'Freeze' : 'Cancel'} Membership`,
+      confirmVariant: isFreeze ? 'warning' : 'danger',
       showReason: true,
-      reasonLabel: 'Freeze reason',
-      reasonRequired: false,
+      reasonLabel: isFreeze ? 'Freeze reason' : 'Cancellation reason',
+      reasonRequired: !isFreeze,
       onConfirm: async (reason) => {
         const today = new Date().toISOString().slice(0, 10)
-        const noteEntry = reason ? `[Frozen ${today}] ${reason}` : `[Frozen ${today}]`
+        const noteEntry = reason ? `[${status} ${today}] ${reason}` : `[${status} ${today}]`
         const updatedNotes = member.notes ? `${member.notes}\n${noteEntry}` : noteEntry
         try {
-          await actions.updateMember(memberId, { status: 'Frozen', notes: updatedNotes })
-          addToast(`${member.name}'s membership frozen${reason ? `: ${reason}` : ''}`)
+          await actions.updateMember(memberId, { status, notes: updatedNotes })
+          addToast(`${member.name}'s membership ${pastTense}${reason ? `: ${reason}` : ''}`)
         } catch {
-          addToast('Failed to freeze membership', { type: 'error' })
+          addToast(`Failed to ${action} membership`, { type: 'error' })
         }
         setConfirmDialog(null)
       },
     })
   }
 
-  function handleRequestCancel(memberId: string) {
-    const member = state.members.find(m => m.id === memberId)
-    if (!member) return
-    setConfirmDialog({
-      title: 'Cancel Membership',
-      message: `Are you sure you want to cancel ${member.name}'s membership? This action cannot be easily undone.`,
-      confirmLabel: 'Cancel Membership',
-      confirmVariant: 'danger',
-      showReason: true,
-      reasonLabel: 'Cancellation reason',
-      reasonRequired: true,
-      onConfirm: async (reason) => {
-        const today = new Date().toISOString().slice(0, 10)
-        const noteEntry = `[Cancelled ${today}] ${reason}`
-        const updatedNotes = member.notes ? `${member.notes}\n${noteEntry}` : noteEntry
-        try {
-          await actions.updateMember(memberId, { status: 'Cancelled', notes: updatedNotes })
-          addToast(`${member.name}'s membership cancelled: ${reason}`)
-        } catch {
-          addToast('Failed to cancel membership', { type: 'error' })
-        }
-        setConfirmDialog(null)
-      },
-    })
-  }
-
-  function handleRequestBulkFreeze() {
+  function handleBulkAction(action: 'freeze' | 'cancel') {
     const count = state.selectedIds.size
-    setConfirmDialog({
-      title: 'Freeze Memberships',
-      message: `Are you sure you want to freeze ${count} membership${count > 1 ? 's' : ''}? These members will not be able to access the facility while frozen.`,
-      confirmLabel: `Freeze ${count} Member${count > 1 ? 's' : ''}`,
-      confirmVariant: 'warning',
-      showReason: true,
-      reasonLabel: 'Freeze reason',
-      reasonRequired: false,
-      onConfirm: async (reason) => {
-        try {
-          await actions.bulkUpdateStatus([...state.selectedIds], 'Frozen')
-          addToast(`${count} member${count > 1 ? 's' : ''} frozen${reason ? `: ${reason}` : ''}`)
-        } catch {
-          addToast('Failed to freeze members', { type: 'error' })
-        }
-        setConfirmDialog(null)
-      },
-    })
-  }
+    const plural = count > 1 ? 's' : ''
+    const isFreeze = action === 'freeze'
+    const status = isFreeze ? 'Frozen' : 'Cancelled'
+    const pastTense = isFreeze ? 'frozen' : 'cancelled'
 
-  function handleRequestBulkCancel() {
-    const count = state.selectedIds.size
     setConfirmDialog({
-      title: 'Cancel Memberships',
-      message: `Are you sure you want to cancel ${count} membership${count > 1 ? 's' : ''}? This action cannot be easily undone.`,
-      confirmLabel: `Cancel ${count} Membership${count > 1 ? 's' : ''}`,
-      confirmVariant: 'danger',
+      title: `${isFreeze ? 'Freeze' : 'Cancel'} Memberships`,
+      message: `Are you sure you want to ${action} ${count} membership${plural}? ${isFreeze ? 'These members will not be able to access the facility while frozen.' : 'This action cannot be easily undone.'}`,
+      confirmLabel: `${isFreeze ? 'Freeze' : 'Cancel'} ${count} ${isFreeze ? `Member${plural}` : `Membership${plural}`}`,
+      confirmVariant: isFreeze ? 'warning' : 'danger',
       showReason: true,
-      reasonLabel: 'Cancellation reason',
-      reasonRequired: true,
+      reasonLabel: isFreeze ? 'Freeze reason' : 'Cancellation reason',
+      reasonRequired: !isFreeze,
       onConfirm: async (reason) => {
         try {
-          await actions.bulkUpdateStatus([...state.selectedIds], 'Cancelled')
-          addToast(`${count} membership${count > 1 ? 's' : ''} cancelled: ${reason}`)
+          await actions.bulkUpdateStatus([...state.selectedIds], status)
+          addToast(`${count} ${isFreeze ? `member${plural}` : `membership${plural}`} ${pastTense}${reason ? `: ${reason}` : ''}`)
         } catch {
-          addToast('Failed to cancel memberships', { type: 'error' })
+          addToast(`Failed to ${action} ${isFreeze ? 'members' : 'memberships'}`, { type: 'error' })
         }
         setConfirmDialog(null)
       },
@@ -146,6 +144,8 @@ export function MembersPage() {
           isCardEditMode={false}
           onToggleCardEditMode={() => {}}
         />
+        <MembersStatsRowSkeleton />
+        <MembersFilterBarSkeleton />
         <MembersTableSkeleton />
       </div>
     )
@@ -184,15 +184,15 @@ export function MembersPage() {
       />
       <MembersFilterBar />
       <MembersTable
-        onRequestFreeze={handleRequestFreeze}
-        onRequestCancel={handleRequestCancel}
+        onRequestFreeze={id => handleMemberAction(id, 'freeze')}
+        onRequestCancel={id => handleMemberAction(id, 'cancel')}
       />
 
       {state.selectedIds.size > 0 && (
         <BulkActionsBar
           onExportSelected={handleExportSelected}
-          onRequestBulkFreeze={handleRequestBulkFreeze}
-          onRequestBulkCancel={handleRequestBulkCancel}
+          onRequestBulkFreeze={() => handleBulkAction('freeze')}
+          onRequestBulkCancel={() => handleBulkAction('cancel')}
         />
       )}
 

@@ -23,15 +23,12 @@ interface Stats {
   pastDue: number
   avgVisitsPerWeek: number
   revenueInPeriod: number
-  retentionRate: number
 }
 
 function formatValue(key: StatCardKey, value: number): string {
   switch (key) {
     case 'revenueInPeriod':
       return `$${value.toLocaleString()}`
-    case 'retentionRate':
-      return `${value}%`
     case 'avgVisitsPerWeek':
       return value.toFixed(1)
     default:

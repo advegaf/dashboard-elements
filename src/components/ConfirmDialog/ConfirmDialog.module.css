@@ -25,13 +25,13 @@
 }
 
 .iconWrap[data-variant="danger"] {
-  background: rgba(239, 68, 68, 0.15);
-  color: #FF9592;
+  background: color-mix(in oklch, var(--color-danger) 15%, transparent);
+  color: var(--color-danger);
 }
 
 .iconWrap[data-variant="warning"] {
-  background: rgba(234, 179, 8, 0.15);
-  color: #facc15;
+  background: color-mix(in oklch, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
 }
 
 .title {
@@ -45,7 +45,7 @@
 
 .message {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.55);
+  color: oklch(0.933 0 0 / 0.55);
   line-height: 1.5;
   margin: 0;
 }
@@ -72,23 +72,23 @@
 }
 
 .confirmBtn[data-variant="danger"] {
-  border-color: rgba(239, 68, 68, 0.4);
-  color: #FF9592;
+  border-color: color-mix(in oklch, var(--color-danger) 40%, transparent);
+  color: var(--color-danger);
 }
 
 .confirmBtn[data-variant="danger"]:hover {
-  border-color: rgba(239, 68, 68, 0.6);
-  background: rgba(239, 68, 68, 0.1);
+  border-color: color-mix(in oklch, var(--color-danger) 60%, transparent);
+  background: color-mix(in oklch, var(--color-danger) 10%, transparent);
 }
 
 .confirmBtn[data-variant="warning"] {
-  border-color: rgba(234, 179, 8, 0.4);
-  color: #facc15;
+  border-color: color-mix(in oklch, var(--color-warning) 40%, transparent);
+  color: var(--color-warning);
 }
 
 .confirmBtn[data-variant="warning"]:hover {
-  border-color: rgba(234, 179, 8, 0.6);
-  background: rgba(234, 179, 8, 0.1);
+  border-color: color-mix(in oklch, var(--color-warning) 60%, transparent);
+  background: color-mix(in oklch, var(--color-warning) 10%, transparent);
 }
 
 .confirmBtn:disabled {

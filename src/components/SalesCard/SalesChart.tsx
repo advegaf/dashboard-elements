@@ -1,127 +1,125 @@
-import { useId } from 'react'
-import {
-  BarChart,
-  Bar,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-} from 'recharts'
-import type { RevenueBucket } from '../../lib/dashboard-aggregations'
+import { PieChart, Pie, Cell, Label, Sector, ResponsiveContainer } from 'recharts'
+import type { RevenueSlice } from '../../lib/dashboard-aggregations'
 
-interface ShapeProps { fill?: string; x?: number; y?: number; width?: number; height?: number; glowId?: string }
-
-function GlowBar(props: ShapeProps) {
-  const { x = 0, y = 0, width = 0, height = 0, fill, glowId } = props
-  const r = 3
-  const d = `M${x},${y} H${x + width} V${y + height - r} A${r},${r} 0 0 1 ${x + width - r},${y + height} H${x + r} A${r},${r} 0 0 1 ${x},${y + height - r} Z`
-  return (
-    <path
-      d={d}
-      fill={fill}
-      filter={glowId ? `url(#${glowId})` : undefined}
-    />
-  )
-}
-
-interface GlassBarProps extends ShapeProps { gradId?: string }
-
-function GlassBar(props: GlassBarProps) {
-  const { x, y, width, height, gradId } = props
-  return (
-    <rect
-      x={x}
-      y={y}
-      width={width}
-      height={height}
-      fill={gradId ? `url(#${gradId})` : undefined}
-      rx={3}
-      ry={3}
-    />
-  )
-}
+const RADIAN = Math.PI / 180
 
 interface SalesChartProps {
-  data: RevenueBucket[]
+  data: RevenueSlice[]
+  colors: string[]
+  total: string
+  activeIndex: number | null
+  onHover: (index: number | null) => void
 }
 
-export function SalesChart({ data }: SalesChartProps) {
-  const id = useId()
-  const glassGradId = `${id}-glassGrad`
-  const barGlowId = `${id}-barGlow`
+function renderActiveShape(props: unknown) {
+  const p = props as Record<string, unknown>
+  return <Sector {...p} outerRadius={(p.outerRadius as number) + 4} />
+}
 
-  function getBarColor(index: number): string {
-    if (index === 0) return '#22995F'
-    return data[index].revenue >= data[index - 1].revenue ? '#22995F' : '#E05552'
-  }
+interface LabelProps {
+  cx: number
+  cy: number
+  midAngle: number
+  outerRadius: number
+  name: string
+  percent: number
+}
 
-  const maxVal = Math.max(...data.map(d => d.gray), ...data.map(d => d.revenue), 0.1)
-  const domainMax = Math.ceil(maxVal * 1.2) || 6
-  const tickStep = domainMax / 3
-  const ticks = [0, Math.round(tickStep * 10) / 10, Math.round(tickStep * 2 * 10) / 10, domainMax]
+function renderLabel(props: LabelProps) {
+  const { cx, cy, midAngle, outerRadius, name, percent } = props
+  const cos = Math.cos(-midAngle * RADIAN)
+  const sin = Math.sin(-midAngle * RADIAN)
 
+  const sx = cx + outerRadius * cos
+  const sy = cy + outerRadius * sin
+  const mx = cx + (outerRadius + 12) * cos
+  const my = cy + (outerRadius + 12) * sin
+  const ex = mx + (cos >= 0 ? 16 : -16)
+  const ey = my
+  const textAnchor = cos >= 0 ? 'start' : 'end'
+
+  return (
+    <g>
+      <polyline
+        points={`${sx},${sy} ${mx},${my} ${ex},${ey}`}
+        stroke="oklch(0.933 0 0 / 0.3)"
+        fill="none"
+        strokeWidth={1}
+      />
+      <text
+        x={ex + (cos >= 0 ? 4 : -4)}
+        y={ey}
+        textAnchor={textAnchor}
+        dominantBaseline="central"
+        fill="oklch(0.933 0 0 / 0.7)"
+        fontSize={12}
+        fontFamily="'Inter', sans-serif"
+      >
+        {`${name} ${(percent * 100).toFixed(0)}%`}
+      </text>
+    </g>
+  )
+}
+
+export function SalesChart({ data, colors, total, activeIndex, onHover }: SalesChartProps) {
   return (
     <div style={{ width: '100%', height: 220 }}>
       <ResponsiveContainer>
-        <BarChart
-          data={data}
-          barGap={-32}
-          barCategoryGap="20%"
-          margin={{ top: 5, right: 20, left: -5, bottom: 0 }}
-        >
+        <PieChart>
           <defs>
-            <linearGradient id={glassGradId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.25)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.08)" />
+            <linearGradient id="glassRingGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="oklch(0.933 0 0)" stopOpacity={0.15} />
+              <stop offset="100%" stopColor="oklch(0.933 0 0)" stopOpacity={0.05} />
             </linearGradient>
-            <filter id={barGlowId} x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
           </defs>
-          <CartesianGrid
-            strokeDasharray="4 4"
-            stroke="rgba(255,255,255,0.08)"
-            vertical={false}
+          <Pie
+            data={[{ value: 1 }]}
+            dataKey="value"
+            cx="50%"
+            cy="50%"
+            innerRadius={60}
+            outerRadius={85}
+            fill="url(#glassRingGrad)"
+            stroke="none"
+            isAnimationActive={false}
           />
-          <XAxis
-            dataKey="name"
-            axisLine={false}
-            tickLine={false}
-            tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 11 }}
-            padding={{ left: 10, right: 10 }}
-          />
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 11 }}
-            width={35}
-            ticks={ticks}
-            domain={[0, domainMax]}
-            tickFormatter={(v: number) => `$${v}k`}
-          />
-          <Bar
-            dataKey="gray"
-            fill="rgba(255,255,255,0.2)"
-            radius={[3, 3, 0, 0]}
-            barSize={32}
-            shape={<GlassBar gradId={glassGradId} />}
-          />
-          <Bar
-            dataKey="revenue"
-            radius={0}
-            barSize={32}
-            shape={<GlowBar glowId={barGlowId} />}
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="label"
+            cx="50%"
+            cy="50%"
+            innerRadius={60}
+            outerRadius={85}
+            activeIndex={activeIndex ?? undefined}
+            activeShape={renderActiveShape}
+            label={renderLabel}
+            labelLine={false}
+            isAnimationActive={false}
+            onMouseEnter={(_, index) => onHover(index)}
+            onMouseLeave={() => onHover(null)}
           >
-            {data.map((_, index) => (
-              <Cell key={index} fill={getBarColor(index)} />
+            <Label
+              position="center"
+              content={({ viewBox }: any) => {
+                const { cx, cy } = viewBox
+                return (
+                  <g>
+                    <text x={cx} y={cy - 8} textAnchor="middle" dominantBaseline="central" fill="oklch(0.933 0 0)" fontSize={20} fontWeight={700} fontFamily="'Inter', sans-serif">
+                      {total}
+                    </text>
+                    <text x={cx} y={cy + 14} textAnchor="middle" dominantBaseline="central" fill="oklch(0.933 0 0 / 0.5)" fontSize={11} fontFamily="'Inter', sans-serif">
+                      Total Revenue
+                    </text>
+                  </g>
+                )
+              }}
+            />
+            {data.map((_, i) => (
+              <Cell key={i} fill={colors[i % colors.length]} stroke="none" />
             ))}
-          </Bar>
-        </BarChart>
+          </Pie>
+        </PieChart>
       </ResponsiveContainer>
     </div>
   )

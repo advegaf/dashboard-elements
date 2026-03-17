@@ -4,41 +4,49 @@ import { fetchDashboardData } from '../lib/dashboard-api'
 import {
   aggregateKpis,
   aggregateRevenueSeries,
-  aggregateRevenueSummary,
+  aggregateRevenueSlices,
   aggregateSignupSeries,
+  aggregateRetentionSeries,
   aggregateHeatmap,
   aggregateCheckinPeriods,
+  aggregateFailedPayments,
   mapRecentCheckIns,
   computeDateRange,
   type KpiData,
   type RevenueBucket,
+  type RevenueSlice,
   type SignupBucket,
+  type RetentionBucket,
   type SummaryRow,
   type RecentCheckIn,
-  type CheckinPeriodRow,
+  type FailedPaymentData,
 } from '../lib/dashboard-aggregations'
+import { fallbackAvatarUrl } from '../utils/avatar'
 
 // ─── Flip to false (or delete this block) to use live Supabase data ────
 const USE_MOCK_DATA = true
 
-function getMockData(timeRange: StatsTimeRange): DashboardDataResult {
-  const { label: dateRange } = computeDateRange(timeRange)
+function getMockData(timeRange: StatsTimeRange): DashboardState {
+  void timeRange
 
   const kpis: KpiData = {
     retention: {
       value: '94.2%',
       trend: { value: 2.1, direction: 'up' },
       sparkline: [91.5, 92.0, 92.8, 93.1, 93.5, 93.8, 94.0, 94.2],
+      memberCount: 247,
     },
     revenue: {
       value: '$24,500',
       trend: { value: 5.8, direction: 'up' },
       sparkline: [205, 212, 218, 224, 231, 236, 241, 245],
     },
-    visits: {
-      value: '3.2',
-      trend: { value: 14.3, direction: 'up' },
-      sparkline: [2.6, 2.7, 2.8, 2.9, 3.0, 3.0, 3.1, 3.2],
+    churnRisk: {
+      total: 14,
+      critical: 3,
+      high: 4,
+      medium: 7,
+      trend: { value: 21.4, direction: 'up' },
     },
     signups: {
       value: '47',
@@ -58,10 +66,23 @@ function getMockData(timeRange: StatsTimeRange): DashboardDataResult {
     { name: 'Mar 5', gray: 5.8, revenue: 3.5 },
   ]
 
-  const revenueSummary: SummaryRow[] = [
-    { label: 'Memberships', value: '$14,567', change: '+5.4%', positive: true },
-    { label: 'Personal Training', value: '$11,457', change: '+3.6%', positive: true },
-    { label: 'Retail & Merch', value: '$3,789', change: '-4.0%', positive: false },
+  const revenueSlices: RevenueSlice[] = [
+    { label: 'Memberships', value: 1456700, formatted: '$14,567', change: '+5.4%', positive: true },
+    { label: 'Personal Training', value: 1145700, formatted: '$11,457', change: '+3.6%', positive: true },
+    { label: 'Retail & Merch', value: 378900, formatted: '$3,789', change: '-4.0%', positive: false },
+  ]
+
+  const retentionSeries: RetentionBucket[] = [
+    { name: 'Feb 5', value: 91.5 },
+    { name: 'Feb 9', value: 92.0 },
+    { name: 'Feb 12', value: 92.8 },
+    { name: 'Feb 15', value: 93.1 },
+    { name: 'Feb 18', value: 93.5 },
+    { name: 'Feb 21', value: 93.8 },
+    { name: 'Feb 24', value: 94.0 },
+    { name: 'Feb 27', value: 93.6 },
+    { name: 'Mar 2', value: 93.9 },
+    { name: 'Mar 5', value: 94.2 },
   ]
 
   const signupSeries: SignupBucket[] = [
@@ -88,14 +109,26 @@ function getMockData(timeRange: StatsTimeRange): DashboardDataResult {
     [4, 3, 2, 1, 1, 1, 3, 8, 18, 24, 22, 18, 14, 10, 6, 4, 3, 2, 2, 1, 1, 1, 1, 2],
   ]
 
-  const checkinPeriods: CheckinPeriodRow[] = [
+  const checkinPeriods: SummaryRow[] = [
     { label: 'Morning (6\u201311 AM)', value: '1,245', change: '+8.2%', positive: true },
     { label: 'Afternoon (12\u20134 PM)', value: '876', change: '-2.1%', positive: false },
     { label: 'Evening (5\u20139 PM)', value: '2,035', change: '+18.7%', positive: true },
   ]
 
-  const avatar = (name: string) =>
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=64&bold=true`
+  const avatar = (name: string) => fallbackAvatarUrl(name)
+
+  const failedPayments: FailedPaymentData = {
+    totalAmount: '$2,847',
+    totalAmountCents: 284700,
+    totalCount: 12,
+    trend: { value: 12.5, direction: 'up' },
+    rows: [
+      { label: 'Expired Card', count: 4, amount: '$1,200', amountCents: 120000 },
+      { label: 'Insufficient Funds', count: 5, amount: '$1,047', amountCents: 104700 },
+      { label: 'Card Declined', count: 2, amount: '$400', amountCents: 40000 },
+      { label: 'Processing Error', count: 1, amount: '$200', amountCents: 20000 },
+    ],
+  }
 
   const recentCheckIns: RecentCheckIn[] = [
     { id: '1', name: 'Sarah Mitchell', avatarUrl: avatar('Sarah Mitchell'), time: '5:15 AM', membership: 'Annual', billingStatus: 'Current' },
@@ -113,15 +146,15 @@ function getMockData(timeRange: StatsTimeRange): DashboardDataResult {
   return {
     kpis,
     revenueSeries,
-    revenueSummary,
+    revenueSlices,
     signupSeries,
+    retentionSeries,
     heatmapData,
     checkinPeriods,
     recentCheckIns,
-    dateRange,
+    failedPayments,
     loading: false,
     errors: {},
-    refetch: () => {},
   }
 }
 // ─── End mock data block ───────────────────────────────────────────────
@@ -136,43 +169,66 @@ interface DashboardErrors {
 export interface DashboardDataResult {
   kpis: KpiData | null
   revenueSeries: RevenueBucket[]
-  revenueSummary: SummaryRow[]
+  revenueSlices: RevenueSlice[]
   signupSeries: SignupBucket[]
+  retentionSeries: RetentionBucket[]
   heatmapData: number[][]
-  checkinPeriods: CheckinPeriodRow[]
+  checkinPeriods: SummaryRow[]
   recentCheckIns: RecentCheckIn[]
+  failedPayments: FailedPaymentData
   dateRange: string
   loading: boolean
   errors: DashboardErrors
   refetch: () => void
 }
 
+interface DashboardState {
+  kpis: KpiData | null
+  revenueSeries: RevenueBucket[]
+  revenueSlices: RevenueSlice[]
+  signupSeries: SignupBucket[]
+  retentionSeries: RetentionBucket[]
+  heatmapData: number[][]
+  checkinPeriods: SummaryRow[]
+  recentCheckIns: RecentCheckIn[]
+  failedPayments: FailedPaymentData
+  loading: boolean
+  errors: DashboardErrors
+}
+
+const initialState: DashboardState = {
+  kpis: null,
+  revenueSeries: [],
+  revenueSlices: [],
+  signupSeries: [],
+  retentionSeries: [],
+  heatmapData: [],
+  checkinPeriods: [],
+  recentCheckIns: [],
+  failedPayments: { totalAmount: '$0', totalAmountCents: 0, totalCount: 0, rows: [] },
+  loading: true,
+  errors: {},
+}
+
 export function useDashboardData(timeRange: StatsTimeRange): DashboardDataResult {
-  if (USE_MOCK_DATA) return getMockData(timeRange)
-
-  const [loading, setLoading] = useState(true)
-  const [kpis, setKpis] = useState<KpiData | null>(null)
-  const [revenueSeries, setRevenueSeries] = useState<RevenueBucket[]>([])
-  const [revenueSummary, setRevenueSummary] = useState<SummaryRow[]>([])
-  const [signupSeries, setSignupSeries] = useState<SignupBucket[]>([])
-  const [heatmapData, setHeatmapData] = useState<number[][]>([])
-  const [checkinPeriods, setCheckinPeriods] = useState<CheckinPeriodRow[]>([])
-  const [recentCheckIns, setRecentCheckIns] = useState<RecentCheckIn[]>([])
-  const [errors, setErrors] = useState<DashboardErrors>({})
-
+  const [data, setData] = useState<DashboardState>(initialState)
   const abortRef = useRef<AbortController | null>(null)
   const requestRef = useRef(0)
 
   const { label: dateRange } = computeDateRange(timeRange)
 
   const fetchData = useCallback(async () => {
+    if (USE_MOCK_DATA) {
+      setData(getMockData(timeRange))
+      return
+    }
+
     abortRef.current?.abort()
     const controller = new AbortController()
     abortRef.current = controller
     const requestId = ++requestRef.current
 
-    setLoading(true)
-    setErrors({})
+    setData(prev => ({ ...prev, loading: true, errors: {} }))
 
     try {
       const raw = await fetchDashboardData(timeRange, controller.signal)
@@ -190,22 +246,25 @@ export function useDashboardData(timeRange: StatsTimeRange): DashboardDataResult
       const checkIns = raw.checkIns.data ?? []
       const recent = raw.recentCheckIns.data ?? []
 
-      setKpis(aggregateKpis(members, payments, checkIns, timeRange))
-      setRevenueSeries(aggregateRevenueSeries(payments, timeRange))
-      setRevenueSummary(aggregateRevenueSummary(payments, timeRange))
-      setSignupSeries(aggregateSignupSeries(members, timeRange))
-      setHeatmapData(aggregateHeatmap(checkIns, raw.timezone))
-      setCheckinPeriods(aggregateCheckinPeriods(checkIns, raw.timezone))
-      setRecentCheckIns(mapRecentCheckIns(recent))
-      setErrors(newErrors)
+      const range = computeDateRange(timeRange)
+
+      setData({
+        kpis: aggregateKpis(members, payments, checkIns, range),
+        revenueSeries: aggregateRevenueSeries(payments, range),
+        revenueSlices: aggregateRevenueSlices(payments, timeRange, range),
+        signupSeries: aggregateSignupSeries(members, range),
+        retentionSeries: aggregateRetentionSeries(members, range),
+        heatmapData: aggregateHeatmap(checkIns, raw.timezone),
+        checkinPeriods: aggregateCheckinPeriods(checkIns, raw.timezone),
+        recentCheckIns: mapRecentCheckIns(recent),
+        failedPayments: aggregateFailedPayments(payments, timeRange, range),
+        loading: false,
+        errors: newErrors,
+      })
     } catch (err) {
       if (requestRef.current !== requestId) return
       if ((err as Error).name === 'AbortError') return
-      setErrors({ members: err as Error })
-    } finally {
-      if (requestRef.current === requestId) {
-        setLoading(false)
-      }
+      setData(prev => ({ ...prev, loading: false, errors: { members: err as Error } }))
     }
   }, [timeRange])
 
@@ -215,16 +274,8 @@ export function useDashboardData(timeRange: StatsTimeRange): DashboardDataResult
   }, [fetchData])
 
   return {
-    kpis,
-    revenueSeries,
-    revenueSummary,
-    signupSeries,
-    heatmapData,
-    checkinPeriods,
-    recentCheckIns,
+    ...data,
     dateRange,
-    loading,
-    errors,
     refetch: fetchData,
   }
 }

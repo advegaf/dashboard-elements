@@ -1,5 +1,6 @@
 import { AreaChart, Area, ResponsiveContainer } from 'recharts'
 import { Skeleton } from '../ui/Skeleton/Skeleton'
+import { colors } from '../../styles/colors'
 import styles from './KpiCard.module.css'
 
 interface KpiCardProps {
@@ -15,11 +16,11 @@ interface KpiCardProps {
   loading?: boolean
 }
 
-export function KpiCard({ title, value, trend, sparklineData, sparklineColor = '#3ED68C', glowColor, loading }: KpiCardProps) {
+export function KpiCard({ title, value, trend, sparklineData, sparklineColor = colors.success, glowColor, loading }: KpiCardProps) {
   const chartData = sparklineData?.map((v, i) => ({ i, v }))
 
   return (
-    <div className={styles.card} style={{ '--glow': glowColor ?? '34, 197, 94' } as React.CSSProperties}>
+    <div className={styles.card} style={{ '--glow-color': glowColor ?? 'var(--color-success)' } as React.CSSProperties}>
       <div className={styles.top}>
         <span className={styles.title}>{title}</span>
         {!loading && chartData && (

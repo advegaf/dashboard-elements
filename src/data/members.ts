@@ -45,9 +45,4 @@ export const COLUMN_LABELS: Record<ColumnKey, string> = {
   notes: 'Notes',
 }
 
-export function formatDate(date: Date): string {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  const day = date.getDate()
-  const suffix = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th'
-  return `${months[date.getMonth()]} ${day}${suffix}, ${date.getFullYear()}`
-}
+export { formatDateFull as formatDate } from '../utils/dates'

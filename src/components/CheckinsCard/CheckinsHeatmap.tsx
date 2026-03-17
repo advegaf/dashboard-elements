@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { colors } from '../../styles/colors'
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
 const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
@@ -49,7 +50,7 @@ export function CheckinsHeatmap({ data }: CheckinsHeatmapProps) {
             key={`day-${row}`}
             x={LABEL_WIDTH / 2}
             y={row * (CELL_H + GAP) + CELL_H / 2 + 4}
-            fill="rgba(255,255,255,0.4)"
+            fill="oklch(0.933 0 0 / 0.4)"
             fontSize={9}
             fontWeight={500}
             textAnchor="middle"
@@ -64,7 +65,7 @@ export function CheckinsHeatmap({ data }: CheckinsHeatmapProps) {
             key={`hour-${hour}`}
             x={LABEL_WIDTH + hour * (CELL_W + GAP) + CELL_W / 2}
             y={svgHeight - 2}
-            fill="rgba(255,255,255,0.35)"
+            fill={colors.textSubtle}
             fontSize={9}
             fontWeight={500}
             textAnchor="middle"
@@ -87,11 +88,11 @@ export function CheckinsHeatmap({ data }: CheckinsHeatmapProps) {
                 width={CELL_W}
                 height={CELL_H}
                 rx={2}
-                fill="#22995F"
+                fill={colors.success}
                 fillOpacity={opacity}
                 stroke={
                   hovered?.day === dayIdx && hovered?.hour === hourIdx
-                    ? 'rgba(255,255,255,0.5)'
+                    ? 'oklch(0.933 0 0 / 0.5)'
                     : 'none'
                 }
                 strokeWidth={1}
@@ -129,14 +130,14 @@ export function CheckinsHeatmap({ data }: CheckinsHeatmapProps) {
             left: hovered.x,
             top: hovered.y - 8,
             transform: 'translate(-50%, -100%)',
-            background: 'rgba(0, 0, 0, 0.75)',
+            background: 'oklch(0 0 0 / 0.75)',
             backdropFilter: 'blur(12px)',
             borderRadius: 8,
             padding: '6px 10px',
-            color: '#fff',
+            color: colors.text,
             fontSize: 12,
             fontWeight: 500,
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            border: `1px solid ${colors.border}`,
             whiteSpace: 'nowrap',
             pointerEvents: 'none',
             zIndex: 10,
