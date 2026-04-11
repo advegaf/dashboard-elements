@@ -45,8 +45,10 @@ export interface SignupPoint {
   signups: number
 }
 
+export type PlanKey = 'monthly' | 'annual' | 'dayPass' | 'trial'
+
 export interface PlanSlice {
-  plan: string
+  plan: PlanKey
   revenue: number
   fill: string
 }
@@ -157,10 +159,10 @@ const mockSignupSeries: SignupPoint[] = [
 ]
 
 const mockRevenueByPlan: PlanSlice[] = [
-  { plan: 'Monthly',  revenue: 5420, fill: 'var(--chart-1)' },
-  { plan: 'Annual',   revenue: 4830, fill: 'var(--chart-2)' },
-  { plan: 'Day Pass', revenue: 1240, fill: 'var(--chart-3)' },
-  { plan: 'Trial',    revenue:  960, fill: 'var(--chart-4)' },
+  { plan: 'monthly', revenue: 5420, fill: 'var(--color-monthly)' },
+  { plan: 'annual',  revenue: 4830, fill: 'var(--color-annual)' },
+  { plan: 'dayPass', revenue: 1240, fill: 'var(--color-dayPass)' },
+  { plan: 'trial',   revenue:  960, fill: 'var(--color-trial)' },
 ]
 
 const rangeLabels: Record<StatsTimeRange, string> = {
