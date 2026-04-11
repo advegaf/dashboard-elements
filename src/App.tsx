@@ -7,6 +7,7 @@ import { ToastContainer } from './components/Toast/Toast'
 import { AppSidebar } from './components/app-sidebar/AppSidebar'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from './components/ui/sidebar'
 import { Separator } from './components/ui/separator'
+import { TooltipProvider } from './components/ui/tooltip'
 import { DashboardPage } from './pages/dashboard/DashboardPage'
 import { Agentation } from 'agentation'
 
@@ -33,8 +34,9 @@ function App() {
 
   return (
     <AuthProvider>
-      <ToastContext.Provider value={{ addToast }}>
-        <Routes>
+      <TooltipProvider>
+        <ToastContext.Provider value={{ addToast }}>
+          <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<LoginPage />} />
@@ -49,8 +51,9 @@ function App() {
           onCancelExit={cancelExitToast}
           onPause={pauseToast}
         />
-        {import.meta.env.DEV && <Agentation />}
-      </ToastContext.Provider>
+          {import.meta.env.DEV && <Agentation />}
+        </ToastContext.Provider>
+      </TooltipProvider>
     </AuthProvider>
   )
 }
