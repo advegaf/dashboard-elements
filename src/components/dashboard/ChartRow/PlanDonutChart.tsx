@@ -1,38 +1,23 @@
 import * as React from 'react'
 import { Label, Pie, PieChart, Sector } from 'recharts'
-import type { PieSectorShapeProps } from 'recharts/types/polar/Pie'
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  ChartContainer,
-  ChartStyle,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from '@/components/ui/chart'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import type { PlanKey, PlanSlice } from '@/hooks/useOverviewData'
+import type { PieSectorDataItem } from 'recharts/types/polar/Pie'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
+import type { PlanSlice } from '@/hooks/useOverviewData'
 
 const chartConfig = {
-  revenue: { label: 'Revenue' },
-  plan:    { label: 'Plan' },
-  monthly: { label: 'Monthly',  color: 'var(--chart-1)' },
-  annual:  { label: 'Annual',   color: 'var(--chart-2)' },
-  dayPass: { label: 'Day Pass', color: 'var(--chart-3)' },
-  trial:   { label: 'Trial',    color: 'var(--chart-4)' },
+  monthly: { label: 'Monthly', color: 'var(--chart-1)' },
+  annual: { label: 'Annual', color: 'var(--chart-2)' },
+  dayPass: { label: 'Day Pass', color: 'var(--chart-4)' },
+  trial: { label: 'Trial', color: 'var(--chart-5)' },
 } satisfies ChartConfig
+
+const planToKey: Record<string, keyof typeof chartConfig> = {
+  Monthly: 'monthly',
+  Annual: 'annual',
+  'Day Pass': 'dayPass',
+  Trial: 'trial',
+}
 
 const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -41,134 +26,134 @@ const currency = new Intl.NumberFormat('en-US', {
 })
 
 export function PlanDonutChart({ data }: { data: PlanSlice[] }) {
-  const id = 'plan-donut'
-  const [activePlan, setActivePlan] = React.useState<PlanKey>(data[0].plan)
-
-  const activeIndex = React.useMemo(
-    () => data.findIndex((item) => item.plan === activePlan),
-    [activePlan, data],
-  )
-  const plans = React.useMemo(() => data.map((item) => item.plan), [data])
-
-  const renderPieShape = React.useCallback(
-    ({ index, outerRadius = 0, ...props }: PieSectorShapeProps) => {
-      if (index === activeIndex) {
-        return (
-          <g>
-            <Sector {...props} outerRadius={outerRadius + 10} />
-            <Sector
-              {...props}
-              outerRadius={outerRadius + 25}
-              innerRadius={outerRadius + 12}
-            />
-          </g>
-        )
-      }
-
-      return <Sector {...props} outerRadius={outerRadius} />
-    },
-    [activeIndex],
+  const sortedData = React.useMemo(
+    () => [...data].sort((a, b) => b.revenue - a.revenue),
+    [data],
   )
 
-  const activeSlice = data[activeIndex]
-  const activeLabel = chartConfig[activePlan].label
-  const activeRevenue = currency.format(activeSlice?.revenue ?? 0)
+  const pieData = React.useMemo(
+    () =>
+      sortedData.map((slice) => ({
+        ...slice,
+        fill: chartConfig[planToKey[slice.plan]]?.color ?? slice.fill,
+      })),
+    [sortedData],
+  )
+
+  const defaultPlan = sortedData[0]?.plan
+  const [activePlan, setActivePlan] = React.useState<string | undefined>(defaultPlan)
+
+  React.useEffect(() => {
+    setActivePlan(defaultPlan)
+  }, [defaultPlan])
+
+  const total = sortedData.reduce((sum, slice) => sum + slice.revenue, 0)
+  const formattedTotal = currency.format(total)
+  const activeSlice = sortedData.find((s) => s.plan === activePlan)
+
+  if (sortedData.length === 0) {
+    return (
+      <Card className="h-[360px]">
+        <CardHeader>
+          <CardDescription>Revenue by plan</CardDescription>
+          <CardTitle className="text-2xl tabular-nums">$0</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex h-40 items-center justify-center text-xs text-muted-foreground">
+            No data
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
-    <Card data-chart={id} className="flex flex-col">
-      <ChartStyle id={id} config={chartConfig} />
-      <CardHeader className="flex-row items-start space-y-0 pb-0">
-        <div className="grid gap-1">
-          <CardTitle>Revenue by plan</CardTitle>
-          <CardDescription>Monthly · Annual · Day Pass · Trial</CardDescription>
-        </div>
-        <Select value={activePlan} onValueChange={(value) => setActivePlan(value as PlanKey)}>
-          <SelectTrigger
-            className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
-            aria-label="Select a plan"
-          >
-            <SelectValue placeholder="Select plan" />
-          </SelectTrigger>
-          <SelectContent align="end" className="rounded-xl">
-            {plans.map((key) => {
-              const config = chartConfig[key]
-
-              if (!config) {
-                return null
-              }
-
-              return (
-                <SelectItem
-                  key={key}
-                  value={key}
-                  className="rounded-lg [&_span]:flex"
-                >
-                  <div className="flex items-center gap-2 text-xs">
-                    <span
-                      className="flex h-3 w-3 shrink-0 rounded-xs"
-                      style={{
-                        backgroundColor: `var(--color-${key})`,
-                      }}
-                    />
-                    {config.label}
-                  </div>
-                </SelectItem>
-              )
-            })}
-          </SelectContent>
-        </Select>
+    <Card className="h-[360px]">
+      <CardHeader>
+        <CardDescription>Revenue by plan</CardDescription>
+        <CardTitle className="text-2xl tabular-nums">{formattedTotal}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1 justify-center pb-0">
-        <ChartContainer
-          id={id}
-          config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[300px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={data}
-              dataKey="revenue"
-              nameKey="plan"
-              innerRadius={60}
-              strokeWidth={5}
-              shape={renderPieShape}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+      <CardContent className="flex-1 min-h-0 pb-0">
+        <div onMouseLeave={() => setActivePlan(defaultPlan)}>
+          <ChartContainer config={chartConfig} className="mx-auto aspect-square h-44">
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="revenue"
+                nameKey="plan"
+                innerRadius={44}
+                outerRadius={72}
+                strokeWidth={2}
+                onMouseEnter={(entry: { payload?: { plan?: string } }) => {
+                  const plan = entry?.payload?.plan
+                  if (plan) setActivePlan(plan)
+                }}
+                shape={(props: PieSectorDataItem) => {
+                  const sectorProps = props as PieSectorDataItem & {
+                    payload?: { plan?: string }
+                  }
+                  const isActive = sectorProps.payload?.plan === activePlan
+                  const baseOuter = props.outerRadius ?? 0
+                  return (
+                    <Sector
+                      {...props}
+                      outerRadius={isActive ? baseOuter + 6 : baseOuter}
+                    />
+                  )
+                }}
+              >
+                <Label
+                  content={({ viewBox }) => {
+                    if (!viewBox || !('cx' in viewBox) || !('cy' in viewBox)) return null
+                    const cx = viewBox.cx as number
+                    const cy = viewBox.cy as number
+                    if (!activeSlice) return null
                     return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
+                      <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
                         <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
+                          x={cx}
+                          y={cy - 2}
+                          className="fill-foreground text-lg font-semibold tabular-nums"
                         >
-                          {activeRevenue}
+                          {currency.format(activeSlice.revenue)}
                         </tspan>
                         <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
+                          x={cx}
+                          y={cy + 14}
+                          className="fill-muted-foreground text-[11px]"
                         >
-                          {activeLabel}
+                          Revenue
                         </tspan>
                       </text>
                     )
+                  }}
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            {sortedData.map((slice) => {
+              const key = planToKey[slice.plan]
+              const color = key ? chartConfig[key].color : slice.fill
+              const isActive = slice.plan === activePlan
+              return (
+                <span
+                  key={slice.plan}
+                  className={
+                    'flex items-center gap-1.5 transition-opacity ' +
+                    (isActive ? 'opacity-100' : 'opacity-70')
                   }
-                }}
-              />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
+                >
+                  <span
+                    className="size-2.5 shrink-0 rounded-[2px]"
+                    style={{ background: color }}
+                  />
+                  {slice.plan}
+                </span>
+              )
+            })}
+          </div>
+        </div>
       </CardContent>
     </Card>
   )
