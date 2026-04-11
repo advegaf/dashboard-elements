@@ -31,10 +31,29 @@ export interface ActivityEvent {
   time: string
 }
 
+export interface RevenuePoint {
+  month: string
+  revenue: number
+}
+
+export interface SignupPoint {
+  week: string
+  signups: number
+}
+
+export interface PlanSlice {
+  plan: string
+  revenue: number
+  fill: string
+}
+
 export interface OverviewDataResult {
   kpis: KpiTile[]
   actionQueue: ActionQueueRow[]
   recentActivity: ActivityEvent[]
+  revenueSeries: RevenuePoint[]
+  signupSeries: SignupPoint[]
+  revenueByPlan: PlanSlice[]
   dateRange: string
   loading: boolean
 }
@@ -78,6 +97,33 @@ const mockRecentActivity: ActivityEvent[] = [
   { id: 'e15', type: 'payment',  memberName: 'Mike Ortiz',      description: 'retry scheduled',       time: '10:45 AM' },
 ]
 
+const mockRevenueSeries: RevenuePoint[] = [
+  { month: 'Nov', revenue: 10200 },
+  { month: 'Dec', revenue: 10750 },
+  { month: 'Jan', revenue: 11080 },
+  { month: 'Feb', revenue: 11620 },
+  { month: 'Mar', revenue: 12100 },
+  { month: 'Apr', revenue: 12450 },
+]
+
+const mockSignupSeries: SignupPoint[] = [
+  { week: 'Wk 1', signups: 5 },
+  { week: 'Wk 2', signups: 7 },
+  { week: 'Wk 3', signups: 4 },
+  { week: 'Wk 4', signups: 9 },
+  { week: 'Wk 5', signups: 6 },
+  { week: 'Wk 6', signups: 8 },
+  { week: 'Wk 7', signups: 12 },
+  { week: 'Wk 8', signups: 18 },
+]
+
+const mockRevenueByPlan: PlanSlice[] = [
+  { plan: 'Monthly',  revenue: 5420, fill: 'var(--chart-1)' },
+  { plan: 'Annual',   revenue: 4830, fill: 'var(--chart-2)' },
+  { plan: 'Day Pass', revenue: 1240, fill: 'var(--chart-3)' },
+  { plan: 'Trial',    revenue:  960, fill: 'var(--chart-4)' },
+]
+
 const rangeLabels: Record<StatsTimeRange, string> = {
   '7d':  'Last 7 days',
   '30d': 'Last 30 days',
@@ -91,6 +137,9 @@ export function useOverviewData(range: StatsTimeRange): OverviewDataResult {
       kpis: mockKpis,
       actionQueue: [...mockActionQueue].sort((a, b) => b.urgency - a.urgency),
       recentActivity: mockRecentActivity,
+      revenueSeries: mockRevenueSeries,
+      signupSeries: mockSignupSeries,
+      revenueByPlan: mockRevenueByPlan,
       dateRange: rangeLabels[range],
       loading: false,
     }),

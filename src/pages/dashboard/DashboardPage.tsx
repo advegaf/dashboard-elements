@@ -3,6 +3,7 @@ import { useOverviewData } from '@/hooks/useOverviewData'
 import { KpiStrip } from '@/components/dashboard/KpiStrip/KpiStrip'
 import { ActionQueue } from '@/components/dashboard/ActionQueue/ActionQueue'
 import { RecentActivityFeed } from '@/components/dashboard/RecentActivity/RecentActivityFeed'
+import { ChartRow } from '@/components/dashboard/ChartRow/ChartRow'
 import { TimeRangePicker } from '@/components/dashboard/TimeRangePicker/TimeRangePicker'
 import type { StatsTimeRange } from '@/lib/dashboard-aggregations'
 
@@ -30,6 +31,12 @@ export function DashboardPage() {
           <RecentActivityFeed events={data.recentActivity} />
         </div>
       </div>
+
+      <ChartRow
+        revenueSeries={data.revenueSeries}
+        signupSeries={data.signupSeries}
+        revenueByPlan={data.revenueByPlan}
+      />
     </div>
   )
 }
