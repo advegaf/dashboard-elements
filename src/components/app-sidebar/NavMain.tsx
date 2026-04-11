@@ -23,23 +23,24 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => {
-            const isActive = location.pathname === item.url || location.pathname.startsWith(item.url + '/')
+            const isActive =
+              !item.disabled &&
+              (location.pathname === item.url || location.pathname.startsWith(item.url + '/'))
+            const Icon = item.icon
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild={!item.disabled}
-                  isActive={isActive}
-                  tooltip={item.title}
-                  disabled={item.disabled}
-                >
+                <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
                   {item.disabled ? (
-                    <span>
-                      <item.icon />
+                    <span
+                      aria-disabled="true"
+                      className="cursor-not-allowed opacity-50"
+                    >
+                      <Icon />
                       <span>{item.title}</span>
                     </span>
                   ) : (
                     <Link to={item.url}>
-                      <item.icon />
+                      <Icon />
                       <span>{item.title}</span>
                     </Link>
                   )}

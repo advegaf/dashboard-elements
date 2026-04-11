@@ -1,4 +1,5 @@
-import { LayoutDashboard, Users, CreditCard, Settings2, Sparkles } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { LayoutDashboard, Users, CreditCard, Settings2 } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -11,12 +12,13 @@ import {
 } from '@/components/ui/sidebar'
 import { NavMain, type NavMainItem } from './NavMain'
 import { NavUser } from './NavUser'
+import { LedgrMark, LedgrWordmark } from './LedgrLogo'
 
 const navItems: NavMainItem[] = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
-  { title: 'Members', url: '/members', icon: Users, disabled: true },
-  { title: 'Billing', url: '/billing', icon: CreditCard, disabled: true },
-  { title: 'Settings', url: '/settings', icon: Settings2, disabled: true },
+  { title: 'Members',   url: '/members',   icon: Users,       disabled: true },
+  { title: 'Billing',   url: '/billing',   icon: CreditCard,  disabled: true },
+  { title: 'Settings',  url: '/settings',  icon: Settings2,   disabled: true },
 ]
 
 export function AppSidebar() {
@@ -25,14 +27,11 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="data-[slot=sidebar-menu-button]:!p-2">
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <Sparkles className="size-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">LEDGR</span>
-                <span className="text-muted-foreground truncate text-xs">Gym billing</span>
-              </div>
+            <SidebarMenuButton size="lg" asChild tooltip="LEDGR">
+              <Link to="/dashboard">
+                <LedgrMark className="hidden size-5 group-data-[collapsible=icon]:block" />
+                <LedgrWordmark className="h-5 w-auto group-data-[collapsible=icon]:hidden" />
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

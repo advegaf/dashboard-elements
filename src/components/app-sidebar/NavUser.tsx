@@ -1,4 +1,5 @@
-import { ChevronsUpDown, LogOut } from 'lucide-react'
+import { ChevronsUpDown, Laptop, LogOut, Moon, Sun } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { useAuthContext } from '@/auth/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -7,7 +8,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -20,6 +26,7 @@ import {
 export function NavUser() {
   const { user } = useAuthContext()
   const { isMobile } = useSidebar()
+  const { theme, setTheme } = useTheme()
 
   const email = user?.email ?? 'signed-out'
   const initials = email.slice(0, 2).toUpperCase()
@@ -65,6 +72,33 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Sun className="size-4 dark:hidden" />
+                <Moon className="hidden size-4 dark:block" />
+                <span>Theme</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="min-w-40">
+                <DropdownMenuRadioGroup
+                  value={theme ?? 'system'}
+                  onValueChange={(value) => setTheme(value)}
+                >
+                  <DropdownMenuRadioItem value="light">
+                    <Sun className="size-4" />
+                    <span>Light</span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="dark">
+                    <Moon className="size-4" />
+                    <span>Dark</span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="system">
+                    <Laptop className="size-4" />
+                    <span>System</span>
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
