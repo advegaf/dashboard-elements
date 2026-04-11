@@ -11,15 +11,15 @@ const typeDotClass: Record<ActivityEventType, string> = {
 
 export function RecentActivityFeed({ events }: { events: ActivityEvent[] }) {
   return (
-    <Card className="flex flex-col">
-      <CardHeader>
+    <Card className="flex h-full flex-col">
+      <CardHeader className="pb-3">
         <CardDescription>Recent activity</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 px-0 pb-0">
-        <ScrollArea className="h-48">
-          <ul className="px-6 pb-4">
+      <CardContent className="flex-1 overflow-hidden px-0 pb-0">
+        <ScrollArea className="h-full">
+          <ul className="px-6 pb-6">
             {events.map((event) => (
-              <li key={event.id} className="flex items-center gap-3 py-2 text-sm">
+              <li key={event.id} className="flex items-center gap-3 py-2.5 text-sm">
                 <span
                   className={`size-1.5 shrink-0 rounded-full ${typeDotClass[event.type]}`}
                   aria-hidden
