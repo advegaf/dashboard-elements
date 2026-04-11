@@ -53,7 +53,7 @@ function App() {
           onCancelExit={cancelExitToast}
           onPause={pauseToast}
         />
-            {import.meta.env.DEV && <Agentation />}
+            <Agentation />
           </ToastContext.Provider>
         </TooltipProvider>
       </ThemeProvider>

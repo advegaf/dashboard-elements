@@ -35,12 +35,12 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                       aria-disabled="true"
                       className="cursor-not-allowed opacity-50"
                     >
-                      <Icon />
+                      <Icon className="size-4 shrink-0" />
                       <span>{item.title}</span>
                     </span>
                   ) : (
                     <Link to={item.url}>
-                      <Icon />
+                      <Icon className="size-4 shrink-0" />
                       <span>{item.title}</span>
                     </Link>
                   )}
