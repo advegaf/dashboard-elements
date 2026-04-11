@@ -1,4 +1,10 @@
-import { X, CircleCheck, TriangleAlert, CircleAlert } from 'lucide-react'
+import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react'
+import {
+  Cancel01Icon,
+  CheckmarkCircle02Icon,
+  Alert02Icon,
+  AlertCircleIcon,
+} from '@hugeicons/core-free-icons'
 import { AnimatePresence, motion } from 'motion/react'
 import { DURATION, type Toast as ToastData, type ToastType } from '../../hooks/useToast'
 import styles from './Toast.module.css'
@@ -11,10 +17,10 @@ interface Props {
   onPause: (id: number) => void
 }
 
-const icons: Record<ToastType, typeof CircleCheck> = {
-  success: CircleCheck,
-  warning: TriangleAlert,
-  error: CircleAlert,
+const icons: Record<ToastType, IconSvgElement> = {
+  success: CheckmarkCircle02Icon,
+  warning: Alert02Icon,
+  error: AlertCircleIcon,
 }
 
 export function ToastContainer({ toasts, onRemove, onFinalRemove, onCancelExit, onPause }: Props) {
@@ -24,7 +30,7 @@ export function ToastContainer({ toasts, onRemove, onFinalRemove, onCancelExit, 
     <div className={styles.container} role="status" aria-live="polite">
       <AnimatePresence initial={false}>
         {toasts.map(t => {
-          const Icon = icons[t.type]
+          const icon = icons[t.type]
           return (
             <motion.div
               key={t.id}
@@ -48,7 +54,7 @@ export function ToastContainer({ toasts, onRemove, onFinalRemove, onCancelExit, 
             >
               <div className={styles.toastBody}>
                 <div className={styles.icon} data-type={t.type}>
-                  <Icon size={20} />
+                  <HugeiconsIcon icon={icon} size={20} strokeWidth={2} />
                 </div>
                 <div className={styles.content}>
                   <span className={styles.title}>{t.message}</span>
@@ -61,7 +67,7 @@ export function ToastContainer({ toasts, onRemove, onFinalRemove, onCancelExit, 
                   aria-label="Close notification"
                   onClick={() => t.exiting ? onFinalRemove(t.id) : onRemove(t.id)}
                 >
-                  <X size={14} />
+                  <HugeiconsIcon icon={Cancel01Icon} size={14} strokeWidth={2} />
                 </button>
               </div>
               {!t.paused && (

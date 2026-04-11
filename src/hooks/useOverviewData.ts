@@ -1,6 +1,12 @@
 import { useMemo } from 'react'
-import { DollarSign, Heart, TrendingUp, UserPlus, Users } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import {
+  DollarCircleIcon,
+  FavouriteIcon,
+  AnalyticsUpIcon,
+  UserAdd01Icon,
+  UserMultipleIcon,
+} from '@hugeicons/core-free-icons'
+import type { IconSvgElement } from '@hugeicons/react'
 import type { StatsTimeRange } from '@/lib/dashboard-aggregations'
 
 export type ActionIssueType = 'past-due' | 'failed-card' | 'at-risk'
@@ -22,7 +28,7 @@ export interface KpiTile {
   subDescription: string
   delta: string
   positive: boolean
-  icon: LucideIcon
+  icon: IconSvgElement
 }
 
 export type ActivityEventType = 'check-in' | 'signup' | 'payment' | 'missed'
@@ -45,10 +51,8 @@ export interface SignupPoint {
   signups: number
 }
 
-export type PlanKey = 'monthly' | 'annual' | 'dayPass' | 'trial'
-
 export interface PlanSlice {
-  plan: PlanKey
+  plan: string
   revenue: number
   fill: string
 }
@@ -71,7 +75,7 @@ const mockKpis: KpiTile[] = [
     subDescription: 'Compared to $11,950 last month',
     delta: '+4.1% this month',
     positive: true,
-    icon: TrendingUp,
+    icon: AnalyticsUpIcon,
   },
   {
     label: 'Active members',
@@ -79,7 +83,7 @@ const mockKpis: KpiTile[] = [
     subDescription: 'Compared to 407 last period',
     delta: '+1.2% this period',
     positive: true,
-    icon: Users,
+    icon: UserMultipleIcon,
   },
   {
     label: 'New signups',
@@ -87,7 +91,7 @@ const mockKpis: KpiTile[] = [
     subDescription: 'Compared to 12 last period',
     delta: '+50% this period',
     positive: true,
-    icon: UserPlus,
+    icon: UserAdd01Icon,
   },
   {
     label: 'Retention',
@@ -95,7 +99,7 @@ const mockKpis: KpiTile[] = [
     subDescription: 'Compared to 94.5% last period',
     delta: '-0.3% this period',
     positive: false,
-    icon: Heart,
+    icon: FavouriteIcon,
   },
   {
     label: 'ARPU',
@@ -103,7 +107,7 @@ const mockKpis: KpiTile[] = [
     subDescription: 'Compared to $29.4 last month',
     delta: '+$0.8 this month',
     positive: true,
-    icon: DollarSign,
+    icon: DollarCircleIcon,
   },
 ]
 
@@ -159,10 +163,10 @@ const mockSignupSeries: SignupPoint[] = [
 ]
 
 const mockRevenueByPlan: PlanSlice[] = [
-  { plan: 'monthly', revenue: 5420, fill: 'var(--color-monthly)' },
-  { plan: 'annual',  revenue: 4830, fill: 'var(--color-annual)' },
-  { plan: 'dayPass', revenue: 1240, fill: 'var(--color-dayPass)' },
-  { plan: 'trial',   revenue:  960, fill: 'var(--color-trial)' },
+  { plan: 'Monthly',  revenue: 5420, fill: 'var(--chart-1)' },
+  { plan: 'Annual',   revenue: 4830, fill: 'var(--chart-2)' },
+  { plan: 'Day Pass', revenue: 1240, fill: 'var(--chart-3)' },
+  { plan: 'Trial',    revenue:  960, fill: 'var(--chart-4)' },
 ]
 
 const rangeLabels: Record<StatsTimeRange, string> = {

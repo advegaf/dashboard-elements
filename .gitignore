@@ -8,3 +8,4 @@ dist
 supabase/.env
 supabase/.temp/
 supabase/.branches/
+.gstack/

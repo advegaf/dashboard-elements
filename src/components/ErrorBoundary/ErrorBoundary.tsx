@@ -1,5 +1,6 @@
 import { Component, type ReactNode } from 'react'
-import { CircleAlert } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { AlertCircleIcon } from '@hugeicons/core-free-icons'
 import styles from './ErrorBoundary.module.css'
 
 interface Props {
@@ -26,7 +27,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className={styles.container}>
-          <CircleAlert size={48} className={styles.icon} />
+          <HugeiconsIcon icon={AlertCircleIcon} size={48} strokeWidth={2} className={styles.icon} />
           <h1 className={styles.heading}>Something went wrong</h1>
           {this.state.error && (
             <code className={styles.code}>{this.state.error.message}</code>

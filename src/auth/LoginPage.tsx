@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
-import { Eye, EyeOff } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons'
 import { useAuth } from './useAuth'
 import { AuthLayout } from './AuthLayout'
 import styles from './LoginPage.module.css'
@@ -174,7 +175,7 @@ export function LoginPage() {
                       className={styles.passwordToggle}
                       onClick={() => setShowLoginPassword(!showLoginPassword)}
                     >
-                      {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showLoginPassword ? <HugeiconsIcon icon={ViewOffIcon} size={18} strokeWidth={2} /> : <HugeiconsIcon icon={ViewIcon} size={18} strokeWidth={2} />}
                     </button>
                   </div>
                 </div>
@@ -248,7 +249,7 @@ export function LoginPage() {
                     className={styles.passwordToggle}
                     onClick={() => setShowSignupPassword(!showSignupPassword)}
                   >
-                    {showSignupPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showSignupPassword ? <HugeiconsIcon icon={ViewOffIcon} size={18} strokeWidth={2} /> : <HugeiconsIcon icon={ViewIcon} size={18} strokeWidth={2} />}
                   </button>
                 </div>
               </div>
@@ -266,7 +267,7 @@ export function LoginPage() {
                     className={styles.passwordToggle}
                     onClick={() => setShowSignupConfirm(!showSignupConfirm)}
                   >
-                    {showSignupConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showSignupConfirm ? <HugeiconsIcon icon={ViewOffIcon} size={18} strokeWidth={2} /> : <HugeiconsIcon icon={ViewIcon} size={18} strokeWidth={2} />}
                   </button>
                 </div>
               </div>
