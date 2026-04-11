@@ -485,7 +485,7 @@ export function aggregateRevenueSlices(payments: PaymentEventRow[], timeRange: S
       label: capitalize(type).replace(/_/g, ' '),
       value: currentSum,
       formatted: formatCurrency(currentSum),
-      change: trend ? `${trend.direction === 'up' ? '+' : '-'}${trend.value}%` : '—',
+      change: trend ? `${trend.direction === 'up' ? '+' : '-'}${trend.value}%` : '-',
       positive: trend ? trend.direction === 'up' : true,
     }
   })

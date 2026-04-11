@@ -130,6 +130,12 @@
   --teal-11: oklch(0.82 0.11 180);
   --teal-12: oklch(0.92 0.06 180);
 
+  /* ── Radius ── */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
   /* ── Layer 2: Semantic Tokens ───────────────────────────────── */
 
   /* --- Backgrounds --- */

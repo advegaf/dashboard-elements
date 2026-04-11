@@ -11,6 +11,7 @@
   color: var(--color-text);
   text-align: center;
   margin-bottom: 8px;
+  text-wrap: balance;
 }
 
 .heading strong {
@@ -22,6 +23,7 @@
   color: var(--color-text-subtle);
   text-align: center;
   margin-bottom: 32px;
+  text-wrap: pretty;
 }
 
 .subtextLink {
@@ -60,7 +62,7 @@
   color: var(--color-text-subtle);
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
   font-family: inherit;
 }
 
@@ -98,7 +100,7 @@
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.1);
   color: var(--color-text);
   outline: none;
-  transition: all 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .field input:focus-visible {
@@ -147,7 +149,7 @@
   border-radius: 16px;
   border: 2px solid var(--color-surface);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
   background: linear-gradient(104deg, oklch(0.933 0 0 / 0.05) 5%, oklch(0.933 0 0 / 0.1) 100%);
   background-origin: border-box;
   color: var(--color-text);
@@ -176,7 +178,7 @@
 }
 
 .ctaButton:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .ctaButton:focus-visible {
@@ -254,7 +256,7 @@
 
 .tab:active,
 .tabActive:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 @media (prefers-reduced-motion: reduce) {

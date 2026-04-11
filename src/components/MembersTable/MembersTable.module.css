@@ -95,6 +95,7 @@
   color: var(--color-text-secondary);
   white-space: nowrap;
   border-top: 1px solid var(--color-border-subtle);
+  font-variant-numeric: tabular-nums;
 }
 
 .table tbody tr {
@@ -123,6 +124,8 @@
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
+  outline: 1px solid oklch(0.933 0 0 / 0.1);
+  outline-offset: -1px;
 }
 
 .memberName {
@@ -183,7 +186,11 @@
   background: oklch(0.933 0 0 / 0.06);
   color: var(--color-text-muted);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, scale 0.15s;
+}
+
+.actionBtn:active {
+  scale: 0.96;
 }
 
 .actionBtn:hover {
@@ -255,6 +262,10 @@
 .pageButtons button:hover:not(:disabled) {
   background: var(--color-surface-hover);
   color: var(--color-text);
+}
+
+.pageButtons button:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .pageButtons button:disabled {

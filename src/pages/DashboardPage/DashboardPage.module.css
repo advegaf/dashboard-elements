@@ -2,34 +2,207 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-  max-width: 1600px;
 }
 
-.kpiRow {
+.widgetGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 16px;
   align-items: stretch;
 }
 
-.kpiRow > * {
+.widgetGrid > * {
   min-height: 0;
 }
 
-.vizRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  align-items: stretch;
+/* Revenue chart card (inline in content widgets) */
+.chartHeader {
+  margin-bottom: 16px;
 }
 
-.vizRow > * {
-  min-height: 0;
+.chartTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-wrap: balance;
 }
 
-.bottomRow {
-  display: grid;
-  grid-template-columns: 7fr 3fr;
-  gap: 20px;
-  align-items: stretch;
+.chartTrend {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.chartValue {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.chartTrendBadge {
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.chartTrendBadge[data-direction="up"] {
+  color: var(--color-success);
+}
+
+.chartTrendBadge[data-direction="down"] {
+  color: var(--color-danger);
+}
+
+.chartPeriod {
+  font-size: 13px;
+  color: var(--color-text-subtle);
+}
+
+.chartArea {
+  height: 240px;
+}
+
+/* KPI inline styles (rendered directly, not via card components) */
+.kpiBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kpiLabel {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+}
+
+.kpiValue {
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpiTrend {
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+
+.kpiTrend[data-direction="up"] {
+  color: var(--color-success);
+}
+
+.kpiTrend[data-direction="down"] {
+  color: var(--color-danger);
+}
+
+.kpiArrow {
+  font-size: 10px;
+  margin-right: 2px;
+}
+
+.kpiPeriod {
+  font-size: 13px;
+  color: var(--color-text-subtle);
+  margin-top: 2px;
+}
+
+/* Failed Payments hero */
+.fpHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 100%;
+  text-align: center;
+}
+
+.fpHeroValue {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.fpHeroLabel {
+  font-size: 13px;
+  color: var(--color-text-subtle);
+}
+
+/* M-size KPI layout */
+.kpiBodyM {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+}
+
+.kpiBodyMLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.kpiBodyMRight {
+  flex: 1;
+  min-width: 0;
+  height: 80px;
+}
+
+/* Add widget button */
+.addWidget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border: 2px dashed var(--color-surface-strong);
+  border-radius: 16px;
+  background: oklch(0.933 0 0 / 0.02);
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  min-height: 100px;
+}
+
+.addWidget:hover {
+  border-color: oklch(0.933 0 0 / 0.3);
+  color: oklch(0.933 0 0 / 0.6);
+  background: oklch(0.933 0 0 / 0.04);
+}
+
+/* Add row button */
+.addRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  border: 2px dashed var(--color-surface-strong);
+  border-radius: 16px;
+  background: oklch(0.933 0 0 / 0.02);
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.addRow:hover {
+  border-color: oklch(0.933 0 0 / 0.3);
+  color: oklch(0.933 0 0 / 0.6);
+  background: oklch(0.933 0 0 / 0.04);
 }

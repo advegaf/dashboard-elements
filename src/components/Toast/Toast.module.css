@@ -97,6 +97,7 @@
   font-size: 12px;
   color: oklch(0.933 0 0 / 0.4);
   line-height: 1.4;
+  font-variant-numeric: tabular-nums;
 }
 
 .clickToStop {
