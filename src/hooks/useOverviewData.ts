@@ -1,4 +1,6 @@
 import { useMemo } from 'react'
+import { DollarSign, Heart, TrendingUp, UserPlus, Users } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type { StatsTimeRange } from '@/lib/dashboard-aggregations'
 
 export type ActionIssueType = 'past-due' | 'failed-card' | 'at-risk'
@@ -17,8 +19,10 @@ export interface ActionQueueRow {
 export interface KpiTile {
   label: string
   value: string
+  subDescription: string
   delta: string
   positive: boolean
+  icon: LucideIcon
 }
 
 export type ActivityEventType = 'check-in' | 'signup' | 'payment' | 'missed'
@@ -59,11 +63,46 @@ export interface OverviewDataResult {
 }
 
 const mockKpis: KpiTile[] = [
-  { label: 'MRR',        value: '$12,450', delta: '+4.1%', positive: true  },
-  { label: 'Active',     value: '412',     delta: '+1.2%', positive: true  },
-  { label: 'New',        value: '18',      delta: '+6',    positive: true  },
-  { label: 'Retention',  value: '94.2%',   delta: '-0.3%', positive: false },
-  { label: 'ARPU',       value: '$30.2',   delta: '+$0.8', positive: true  },
+  {
+    label: 'MRR',
+    value: '$12,450',
+    subDescription: 'Compared to $11,950 last month',
+    delta: '+4.1% this month',
+    positive: true,
+    icon: TrendingUp,
+  },
+  {
+    label: 'Active members',
+    value: '412',
+    subDescription: 'Compared to 407 last period',
+    delta: '+1.2% this period',
+    positive: true,
+    icon: Users,
+  },
+  {
+    label: 'New signups',
+    value: '18',
+    subDescription: 'Compared to 12 last period',
+    delta: '+50% this period',
+    positive: true,
+    icon: UserPlus,
+  },
+  {
+    label: 'Retention',
+    value: '94.2%',
+    subDescription: 'Compared to 94.5% last period',
+    delta: '-0.3% this period',
+    positive: false,
+    icon: Heart,
+  },
+  {
+    label: 'ARPU',
+    value: '$30.2',
+    subDescription: 'Compared to $29.4 last month',
+    delta: '+$0.8 this month',
+    positive: true,
+    icon: DollarSign,
+  },
 ]
 
 const mockActionQueue: ActionQueueRow[] = [
