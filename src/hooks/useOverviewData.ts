@@ -1,4 +1,12 @@
 import { useMemo } from 'react'
+import {
+  DollarCircleIcon,
+  FavouriteIcon,
+  AnalyticsUpIcon,
+  UserAdd01Icon,
+  UserMultipleIcon,
+} from '@hugeicons/core-free-icons'
+import type { IconSvgElement } from '@hugeicons/react'
 import type { StatsTimeRange } from '@/lib/dashboard-aggregations'
 
 export type ActionIssueType = 'past-due' | 'failed-card' | 'at-risk'
@@ -14,16 +22,13 @@ export interface ActionQueueRow {
   urgency: number
 }
 
-export interface PulseCheckedIn {
-  count: number
-  delta: number
-  sparkline: number[]
-}
-
-export interface PulseNewMember {
-  count: number
-  delta: number
-  recentInitials: string[]
+export interface KpiTile {
+  label: string
+  value: string
+  subDescription: string
+  delta: string
+  positive: boolean
+  icon: IconSvgElement
 }
 
 export type ActivityEventType = 'check-in' | 'signup' | 'payment' | 'missed'
@@ -36,14 +41,75 @@ export interface ActivityEvent {
   time: string
 }
 
+export interface RevenuePoint {
+  month: string
+  revenue: number
+}
+
+export interface SignupPoint {
+  week: string
+  signups: number
+}
+
+export interface PlanSlice {
+  plan: string
+  revenue: number
+  fill: string
+}
+
 export interface OverviewDataResult {
+  kpis: KpiTile[]
   actionQueue: ActionQueueRow[]
-  checkedInToday: PulseCheckedIn
-  newThisWeek: PulseNewMember
   recentActivity: ActivityEvent[]
+  revenueSeries: RevenuePoint[]
+  signupSeries: SignupPoint[]
+  revenueByPlan: PlanSlice[]
   dateRange: string
   loading: boolean
 }
+
+const mockKpis: KpiTile[] = [
+  {
+    label: 'MRR',
+    value: '$12,450',
+    subDescription: 'Compared to $11,950 last month',
+    delta: '+4.1% this month',
+    positive: true,
+    icon: AnalyticsUpIcon,
+  },
+  {
+    label: 'Active members',
+    value: '412',
+    subDescription: 'Compared to 407 last period',
+    delta: '+1.2% this period',
+    positive: true,
+    icon: UserMultipleIcon,
+  },
+  {
+    label: 'New signups',
+    value: '18',
+    subDescription: 'Compared to 12 last period',
+    delta: '+50% this period',
+    positive: true,
+    icon: UserAdd01Icon,
+  },
+  {
+    label: 'Retention',
+    value: '94.2%',
+    subDescription: 'Compared to 94.5% last period',
+    delta: '-0.3% this period',
+    positive: false,
+    icon: FavouriteIcon,
+  },
+  {
+    label: 'ARPU',
+    value: '$30.2',
+    subDescription: 'Compared to $29.4 last month',
+    delta: '+$0.8 this month',
+    positive: true,
+    icon: DollarCircleIcon,
+  },
+]
 
 const mockActionQueue: ActionQueueRow[] = [
   { id: 'a1', memberName: 'Jane Doe',       issueType: 'past-due',    amount: '$89',  amountCents: 8900,  days: 2,  lastActivity: '2d ago', urgency: 9 },
@@ -58,31 +124,53 @@ const mockActionQueue: ActionQueueRow[] = [
   { id: 'a10',memberName: 'Diana Reyes',    issueType: 'at-risk',                                         days: 14, lastActivity: '14d ago', urgency: 6 },
 ]
 
-const mockCheckedInToday: PulseCheckedIn = {
-  count: 24,
-  delta: 8,
-  sparkline: [12, 15, 14, 18, 20, 22, 24],
-}
-
-const mockNewThisWeek: PulseNewMember = {
-  count: 3,
-  delta: 1,
-  recentInitials: ['AB', 'MR', 'KP'],
-}
-
 const mockRecentActivity: ActivityEvent[] = [
-  { id: 'e1', type: 'check-in', memberName: 'Sarah Mitchell', description: 'checked in',            time: '5:15 AM' },
-  { id: 'e2', type: 'check-in', memberName: 'James Cooper',   description: 'checked in',            time: '5:42 AM' },
-  { id: 'e3', type: 'signup',   memberName: 'Alex Baker',     description: 'signed up — Monthly',   time: '6:02 AM' },
-  { id: 'e4', type: 'check-in', memberName: 'Diana Reyes',    description: 'checked in',            time: '6:08 AM' },
-  { id: 'e5', type: 'payment',  memberName: 'Marcus Johnson', description: 'paid $89 — Monthly',    time: '6:33 AM' },
-  { id: 'e6', type: 'check-in', memberName: 'Emily Zhang',    description: 'checked in',            time: '7:01 AM' },
-  { id: 'e7', type: 'missed',   memberName: 'Robert Akins',   description: "hasn't checked in 14d", time: '—' },
-  { id: 'e8', type: 'check-in', memberName: 'Priya Sharma',   description: 'checked in',            time: '8:05 AM' },
+  { id: 'e1',  type: 'check-in', memberName: 'Sarah Mitchell',  description: 'checked in',            time: '5:15 AM' },
+  { id: 'e2',  type: 'check-in', memberName: 'James Cooper',    description: 'checked in',            time: '5:42 AM' },
+  { id: 'e3',  type: 'signup',   memberName: 'Alex Baker',      description: 'signed up — Monthly',   time: '6:02 AM' },
+  { id: 'e4',  type: 'check-in', memberName: 'Diana Reyes',     description: 'checked in',            time: '6:08 AM' },
+  { id: 'e5',  type: 'payment',  memberName: 'Marcus Johnson',  description: 'paid $89 — Monthly',    time: '6:33 AM' },
+  { id: 'e6',  type: 'check-in', memberName: 'Emily Zhang',     description: 'checked in',            time: '7:01 AM' },
+  { id: 'e7',  type: 'missed',   memberName: 'Robert Akins',    description: "hasn't checked in 14d", time: '—' },
+  { id: 'e8',  type: 'check-in', memberName: 'Priya Sharma',    description: 'checked in',            time: '8:05 AM' },
+  { id: 'e9',  type: 'check-in', memberName: 'Tyler Brooks',    description: 'checked in',            time: '8:34 AM' },
+  { id: 'e10', type: 'signup',   memberName: 'Kevin Duarte',    description: 'signed up — Day Pass',  time: '9:12 AM' },
+  { id: 'e11', type: 'payment',  memberName: 'Natalie Owens',   description: 'paid $220 — Annual',    time: '9:42 AM' },
+  { id: 'e12', type: 'check-in', memberName: 'Rita Kelley',     description: 'checked in',            time: '10:01 AM' },
+  { id: 'e13', type: 'missed',   memberName: 'Sam Lee',         description: "hasn't checked in 3d",  time: '—' },
+  { id: 'e14', type: 'check-in', memberName: 'Jane Doe',        description: 'checked in',            time: '10:28 AM' },
+  { id: 'e15', type: 'payment',  memberName: 'Mike Ortiz',      description: 'retry scheduled',       time: '10:45 AM' },
+]
+
+const mockRevenueSeries: RevenuePoint[] = [
+  { month: 'Nov', revenue: 10200 },
+  { month: 'Dec', revenue: 10750 },
+  { month: 'Jan', revenue: 11080 },
+  { month: 'Feb', revenue: 11620 },
+  { month: 'Mar', revenue: 12100 },
+  { month: 'Apr', revenue: 12450 },
+]
+
+const mockSignupSeries: SignupPoint[] = [
+  { week: 'Wk 1', signups: 5 },
+  { week: 'Wk 2', signups: 7 },
+  { week: 'Wk 3', signups: 4 },
+  { week: 'Wk 4', signups: 9 },
+  { week: 'Wk 5', signups: 6 },
+  { week: 'Wk 6', signups: 8 },
+  { week: 'Wk 7', signups: 12 },
+  { week: 'Wk 8', signups: 18 },
+]
+
+const mockRevenueByPlan: PlanSlice[] = [
+  { plan: 'Monthly',  revenue: 5420, fill: 'var(--chart-1)' },
+  { plan: 'Annual',   revenue: 4830, fill: 'var(--chart-2)' },
+  { plan: 'Day Pass', revenue: 1240, fill: 'var(--chart-3)' },
+  { plan: 'Trial',    revenue:  960, fill: 'var(--chart-4)' },
 ]
 
 const rangeLabels: Record<StatsTimeRange, string> = {
-  '7d': 'Last 7 days',
+  '7d':  'Last 7 days',
   '30d': 'Last 30 days',
   '90d': 'Last 90 days',
   'all': 'All time',
@@ -91,10 +179,12 @@ const rangeLabels: Record<StatsTimeRange, string> = {
 export function useOverviewData(range: StatsTimeRange): OverviewDataResult {
   return useMemo(
     () => ({
+      kpis: mockKpis,
       actionQueue: [...mockActionQueue].sort((a, b) => b.urgency - a.urgency),
-      checkedInToday: mockCheckedInToday,
-      newThisWeek: mockNewThisWeek,
       recentActivity: mockRecentActivity,
+      revenueSeries: mockRevenueSeries,
+      signupSeries: mockSignupSeries,
+      revenueByPlan: mockRevenueByPlan,
       dateRange: rangeLabels[range],
       loading: false,
     }),

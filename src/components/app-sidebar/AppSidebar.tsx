@@ -1,43 +1,58 @@
 import { Link } from 'react-router-dom'
-import { LayoutDashboard, Users, CreditCard, Settings2 } from 'lucide-react'
+import {
+  DashboardSquare01Icon,
+  UserMultipleIcon,
+  CreditCardIcon,
+  Settings02Icon,
+} from '@hugeicons/core-free-icons'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { NavMain, type NavMainItem } from './NavMain'
+import { NavMain, type NavMainGroup } from './NavMain'
 import { NavUser } from './NavUser'
 import { LedgrMark, LedgrWordmark } from './LedgrLogo'
 
-const navItems: NavMainItem[] = [
-  { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
-  { title: 'Members',   url: '/members',   icon: Users,       disabled: true },
-  { title: 'Billing',   url: '/billing',   icon: CreditCard,  disabled: true },
-  { title: 'Settings',  url: '/settings',  icon: Settings2,   disabled: true },
+const navGroups: NavMainGroup[] = [
+  {
+    label: 'Overview',
+    items: [
+      { title: 'Dashboard', url: '/dashboard', icon: DashboardSquare01Icon },
+    ],
+  },
+  {
+    label: 'Workspace',
+    items: [
+      { title: 'Members', url: '/members', icon: UserMultipleIcon, disabled: true, comingSoon: true },
+      { title: 'Billing', url: '/billing', icon: CreditCardIcon,   disabled: true, comingSoon: true },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      { title: 'Settings', url: '/settings', icon: Settings02Icon, disabled: true, comingSoon: true },
+    ],
+  },
 ]
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild tooltip="LEDGR">
-              <Link to="/dashboard">
-                <LedgrMark className="hidden size-5 group-data-[collapsible=icon]:block" />
-                <LedgrWordmark className="h-5 w-auto group-data-[collapsible=icon]:hidden" />
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+    <Sidebar variant="inset" collapsible="icon">
+      <SidebarHeader className="h-14 flex-row items-center px-4 py-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+        <Link
+          to="/dashboard"
+          aria-label="LEDGR"
+          className="flex items-center rounded-md outline-hidden focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+        >
+          <LedgrMark className="hidden size-8 shrink-0 group-data-[collapsible=icon]:block" />
+          <LedgrWordmark className="block h-8 w-32 shrink-0 group-data-[collapsible=icon]:hidden" />
+        </Link>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navItems} />
+        <NavMain groups={navGroups} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

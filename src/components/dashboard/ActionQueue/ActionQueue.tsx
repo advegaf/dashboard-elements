@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { cn, getInitials } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -27,6 +29,12 @@ const issueLabels: Record<ActionIssueType, string> = {
   'at-risk':     'At risk',
 }
 
+const issueBadgeClass: Record<ActionIssueType, string> = {
+  'past-due':    'bg-warning/15 text-warning ring-1 ring-warning/30',
+  'failed-card': 'bg-destructive/15 text-destructive ring-1 ring-destructive/30',
+  'at-risk':     'bg-info/15 text-info ring-1 ring-info/30',
+}
+
 const actionButtonLabels: Record<ActionIssueType, string> = {
   'past-due':    'Call',
   'failed-card': 'Retry',
@@ -42,9 +50,9 @@ export function ActionQueue({ rows }: { rows: ActionQueueRow[] }) {
   )
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
-        <CardTitle>Action queue ({filtered.length})</CardTitle>
+        <CardTitle>Action queue</CardTitle>
         <CardAction>
           <Select value={filter} onValueChange={(value) => setFilter(value as FilterValue)}>
             <SelectTrigger size="sm" className="w-32">
@@ -81,9 +89,20 @@ export function ActionQueue({ rows }: { rows: ActionQueueRow[] }) {
             ) : (
               filtered.map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell className="pl-6 font-medium">{row.memberName}</TableCell>
+                  <TableCell className="pl-6 font-medium">
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarFallback>{getInitials(row.memberName)}</AvatarFallback>
+                      </Avatar>
+                      <span>{row.memberName}</span>
+                    </div>
+                  </TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{issueLabels[row.issueType]}</Badge>
+                    <Badge
+                      className={cn('rounded-full border-0', issueBadgeClass[row.issueType])}
+                    >
+                      {issueLabels[row.issueType]}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     {row.amount ?? (row.days !== undefined ? `${row.days}d` : '—')}

@@ -1,4 +1,11 @@
-import { ChevronsUpDown, Laptop, LogOut, Moon, Sun } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import {
+  UnfoldMoreIcon,
+  LaptopIcon,
+  Logout01Icon,
+  Moon02Icon,
+  Sun03Icon,
+} from '@hugeicons/core-free-icons'
 import { useTheme } from 'next-themes'
 import { useAuthContext } from '@/auth/AuthContext'
 import { supabase } from '@/lib/supabase'
@@ -52,7 +59,7 @@ export function NavUser() {
                 <span className="truncate font-medium">{displayName}</span>
                 <span className="text-muted-foreground truncate text-xs">{email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <HugeiconsIcon icon={UnfoldMoreIcon} strokeWidth={2} className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -75,8 +82,8 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
-                <Sun className="size-4 dark:hidden" />
-                <Moon className="hidden size-4 dark:block" />
+                <HugeiconsIcon icon={Sun03Icon} strokeWidth={2} className="size-4 dark:hidden" />
+                <HugeiconsIcon icon={Moon02Icon} strokeWidth={2} className="hidden size-4 dark:block" />
                 <span>Theme</span>
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="min-w-40">
@@ -85,15 +92,15 @@ export function NavUser() {
                   onValueChange={(value) => setTheme(value)}
                 >
                   <DropdownMenuRadioItem value="light">
-                    <Sun className="size-4" />
+                    <HugeiconsIcon icon={Sun03Icon} strokeWidth={2} className="size-4" />
                     <span>Light</span>
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="dark">
-                    <Moon className="size-4" />
+                    <HugeiconsIcon icon={Moon02Icon} strokeWidth={2} className="size-4" />
                     <span>Dark</span>
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="system">
-                    <Laptop className="size-4" />
+                    <HugeiconsIcon icon={LaptopIcon} strokeWidth={2} className="size-4" />
                     <span>System</span>
                   </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
@@ -101,7 +108,7 @@ export function NavUser() {
             </DropdownMenuSub>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
-              <LogOut />
+              <HugeiconsIcon icon={Logout01Icon} strokeWidth={2} />
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
