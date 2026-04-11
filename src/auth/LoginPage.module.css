@@ -81,7 +81,9 @@
 }
 
 .field {
-  composes: formField from '../styles/shared.module.css';
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .field span {

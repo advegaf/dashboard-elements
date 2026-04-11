@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import type { StatsTimeRange } from '../context/MembersContext'
+import type { StatsTimeRange } from '../lib/dashboard-aggregations'
 import { fetchDashboardData } from '../lib/dashboard-api'
 import {
   aggregateKpis,

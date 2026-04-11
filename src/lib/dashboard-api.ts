@@ -2,7 +2,7 @@ import { supabase } from './supabase'
 import { getGymId, getGymTimezone } from './members-api'
 import { computeDateRange } from './dashboard-aggregations'
 import type { MemberSummaryRow, PaymentEventRow, CheckInEventRow, RecentCheckInRow } from './dashboard-aggregations'
-import type { StatsTimeRange } from '../context/MembersContext'
+import type { StatsTimeRange } from './dashboard-aggregations'
 
 interface QueryResult<T> {
   status: 'fulfilled' | 'rejected'

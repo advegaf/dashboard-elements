@@ -1,4 +1,4 @@
-import type { StatsTimeRange } from '../context/MembersContext'
+export type StatsTimeRange = '7d' | '30d' | '90d' | 'all'
 import { formatDateShort, formatDateWithSuffix } from '../utils/dates'
 import { fallbackAvatarUrl } from '../utils/avatar'
 import { capitalize } from '../utils/strings'
