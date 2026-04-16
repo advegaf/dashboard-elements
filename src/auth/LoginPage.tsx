@@ -1,3 +1,12 @@
+// Login page UI fully commented out per request.
+// The component still exists so existing routes (/login, /signup) keep resolving,
+// but it renders nothing. Restore by uncommenting the block below.
+
+export function LoginPage() {
+  return null
+}
+
+/*
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
@@ -294,3 +303,4 @@ export function LoginPage() {
     </AuthLayout>
   )
 }
+*/
